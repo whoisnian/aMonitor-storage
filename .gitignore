@@ -1,1 +1,8 @@
+# Ignode .vscode
+.vscode
+
+# Ignore node_modules
 node_modules
+
+# Ignore tmp
+tmp
