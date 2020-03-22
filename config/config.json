@@ -1,0 +1,16 @@
+{
+  "postgresql": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dbname": "amonitor",
+    "user": "postgres",
+    "pass": "password",
+    "max": 10
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 3000
+  },
+  "debug": true,
+  "pidPath": "../tmp/pids/aMonitor-storage.pid"
+}
