@@ -1,6 +1,6 @@
 module.exports = {
   presets: [
-    '@babel/env'
+    ['@babel/preset-env', { targets: { esmodules: true } }]
   ],
   ignore: []
 }
