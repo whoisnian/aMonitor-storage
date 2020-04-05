@@ -34,7 +34,7 @@ const initPool = async () => {
 
 const poolQuery = (text, params) => {
   if (!_dbPool) throw new Error('DB Pool has not been initialized. Please call init first.')
-  config.debug && logger.plain(getSQL(text, params))
+  config.debug && logger.plain('\x1b[1;36m' + getSQL(text, params) + '\x1b[0m')
   return _dbPool.query(text, params)
 }
 
