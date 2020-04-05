@@ -15,7 +15,21 @@ const getAgentIDbyToken = async (token) => {
   return res.rows[0].id
 }
 
+const updateBasicInfo = async (packet, agentID) => {
+  const sql = 'UPDATE agents set (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) where id = $7'
+  const now = new Date()
+  await poolQuery(sql, [
+    packet.MetaData.Distro,
+    packet.MetaData.Kernel,
+    packet.MetaData.Hostname,
+    packet.MetaData.CPUModel,
+    packet.MetaData.CPUCores,
+    now,
+    agentID])
+}
+
 export {
   registerAgent,
-  getAgentIDbyToken
+  getAgentIDbyToken,
+  updateBasicInfo
 }
