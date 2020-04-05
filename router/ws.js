@@ -5,7 +5,9 @@ import {
   getAgentIDbyToken,
   updateBasicInfo,
   insertCpuInfo,
-  insertMemInfo
+  insertMemInfo,
+  insertLoadInfo,
+  insertNetInfo
 } from '../module/storage'
 
 const wsServer = new WebSocketServer({ noServer: true })
@@ -27,6 +29,12 @@ wsServer.on('connection', (ws, req) => {
         break
       case 'memInfo':
         insertMemInfo(packet, req.from)
+        break
+      case 'loadInfo':
+        insertLoadInfo(packet, req.from)
+        break
+      case 'netInfo':
+        insertNetInfo(packet, req.from)
         break
     }
   })

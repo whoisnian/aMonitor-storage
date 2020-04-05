@@ -52,10 +52,33 @@ const insertMemInfo = async (packet, agentID) => {
     agentID])
 }
 
+const insertLoadInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO loadinfos(avg1, avg5, avg15, time, agent_id) VALUES ($1, $2, $3, $4, $5)'
+  await poolQuery(sql, [
+    packet.MetaData.Avg1,
+    packet.MetaData.Avg5,
+    packet.MetaData.Avg15,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
+const insertNetInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO netinfos(receive_rate, receive_sum, transmit_rate, transmit_sum, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6)'
+  await poolQuery(sql, [
+    packet.MetaData.Rrate,
+    packet.MetaData.Rsum,
+    packet.MetaData.Trate,
+    packet.MetaData.Tsum,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
   updateBasicInfo,
   insertCpuInfo,
-  insertMemInfo
+  insertMemInfo,
+  insertLoadInfo,
+  insertNetInfo
 }
