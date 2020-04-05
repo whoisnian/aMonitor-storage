@@ -21,22 +21,24 @@ const isNumber = (v) => { return typeof v === 'number' }
 const isHexString = (v) => { return /^[0-9A-F]+$/i.test(v) }
 
 const tokenEncode = (raw, key) => {
-  const iv = randomBytes(8)
-  const cipher = createCipheriv('AES-256-CFB', key, iv.toString('hex'))
+  const iv = randomBytes(16)
+  const cipher = createCipheriv('AES-256-CFB', key, iv)
 
-  let res = cipher.update(raw, 'hex', 'base64')
-  res += cipher.final('base64')
-  return iv.toString('base64') + res
+  const buf1 = cipher.update(raw, 'hex')
+  const buf2 = cipher.final()
+  return Buffer.concat([iv, buf1, buf2]).toString('base64')
 }
 
 const tokenDecode = (raw, key) => {
-  const iv = Buffer.from(raw.slice(0, 12), 'base64')
-  const encrypted = raw.slice(12)
-  const decipher = createDecipheriv('AES-256-CFB', key, iv.toString('hex'))
+  const buf = Buffer.from(raw, 'base64')
 
-  let res = decipher.update(encrypted, 'base64', 'hex')
-  res += decipher.final('hex')
-  return res
+  const iv = buf.slice(0, 16)
+  const encrypted = buf.slice(16)
+  const decipher = createDecipheriv('AES-256-CFB', key, iv)
+
+  const res1 = decipher.update(encrypted)
+  const res2 = decipher.final()
+  return Buffer.concat([res1, res2]).toString('hex')
 }
 
 export { asyncRouter, getSQL, isString, isNumber, isHexString, tokenEncode, tokenDecode }
