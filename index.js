@@ -4,6 +4,7 @@ import { logger } from './module/logger'
 import { initPool } from './module/dbPool'
 import { asyncRouter } from './module/util'
 import { wsRouter } from './router/ws'
+import { registerRouter } from './router/register'
 import { statusRouter, updateStatus } from './router/status'
 
 const app = express()
@@ -36,6 +37,7 @@ const runServer = async () => {
 
   // 设置路由
   app.get('/status', asyncRouter(statusRouter))
+  app.post('/register', asyncRouter(registerRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {
