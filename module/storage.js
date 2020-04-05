@@ -16,20 +16,46 @@ const getAgentIDbyToken = async (token) => {
 }
 
 const updateBasicInfo = async (packet, agentID) => {
-  const sql = 'UPDATE agents set (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) where id = $7'
-  const now = new Date()
+  const sql = 'UPDATE agents SET (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) where id = $7'
   await poolQuery(sql, [
     packet.MetaData.Distro,
     packet.MetaData.Kernel,
     packet.MetaData.Hostname,
     packet.MetaData.CPUModel,
     packet.MetaData.CPUCores,
-    now,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
+const insertCpuInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO cpuinfos(used_percent, time, agent_id) VALUES ($1, $2, $3)'
+  await poolQuery(sql, [
+    packet.MetaData.UsedPCT,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
+const insertMemInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO meminfos(ram_total, ram_cached, ram_used, ram_free, ram_avail, ram_used_percent, swap_total, swap_used, swap_free, swap_used_percent, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
+  await poolQuery(sql, [
+    packet.MetaData.RAMTotal,
+    packet.MetaData.RAMCached,
+    packet.MetaData.RAMUsed,
+    packet.MetaData.RAMFree,
+    packet.MetaData.RAMAvail,
+    packet.MetaData.RAMUsedPCT,
+    packet.MetaData.SwapTotal,
+    packet.MetaData.SwapUsed,
+    packet.MetaData.SwapFree,
+    packet.MetaData.SwapUsedPCT,
+    new Date(packet.Timestamp * 1000),
     agentID])
 }
 
 export {
   registerAgent,
   getAgentIDbyToken,
-  updateBasicInfo
+  updateBasicInfo,
+  insertCpuInfo,
+  insertMemInfo
 }

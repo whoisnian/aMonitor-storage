@@ -1,7 +1,12 @@
 import { URL } from 'url'
-import { logger } from '../module/logger'
-import { getAgentIDbyToken, updateBasicInfo } from '../module/storage'
 import { Server as WebSocketServer } from 'ws'
+import { logger } from '../module/logger'
+import {
+  getAgentIDbyToken,
+  updateBasicInfo,
+  insertCpuInfo,
+  insertMemInfo
+} from '../module/storage'
 
 const wsServer = new WebSocketServer({ noServer: true })
 
@@ -16,6 +21,12 @@ wsServer.on('connection', (ws, req) => {
     switch (packet.Category) {
       case 'basicInfo':
         updateBasicInfo(packet, req.from)
+        break
+      case 'cpuInfo':
+        insertCpuInfo(packet, req.from)
+        break
+      case 'memInfo':
+        insertMemInfo(packet, req.from)
         break
     }
   })
