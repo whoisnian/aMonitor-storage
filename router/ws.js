@@ -7,7 +7,11 @@ import {
   insertCpuInfo,
   insertMemInfo,
   insertLoadInfo,
-  insertNetInfo
+  insertNetInfo,
+  insertDiskInfo,
+  insertMountsInfo,
+  insertSshdInfo,
+  insertFileMDInfo
 } from '../module/storage'
 
 const wsServer = new WebSocketServer({ noServer: true })
@@ -35,6 +39,18 @@ wsServer.on('connection', (ws, req) => {
         break
       case 'netInfo':
         insertNetInfo(packet, req.from)
+        break
+      case 'diskInfo':
+        insertDiskInfo(packet, req.from)
+        break
+      case 'mountsInfo':
+        insertMountsInfo(packet, req.from)
+        break
+      case 'sshdInfo':
+        insertSshdInfo(packet, req.from)
+        break
+      case 'fileMDInfo':
+        insertFileMDInfo(packet, req.from)
         break
     }
   })

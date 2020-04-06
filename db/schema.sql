@@ -106,8 +106,8 @@ CREATE TABLE IF NOT EXISTS mountinfos (
 SELECT create_hypertable('mountinfos', 'time');
 CREATE INDEX IF NOT EXISTS index_mountinfos_on_agent_id ON mountinfos(agent_id, dev_name, time DESC);
 
--- logininfos ssh登录事件统计
-CREATE TABLE IF NOT EXISTS logininfos (
+-- sshdinfos ssh登录事件统计
+CREATE TABLE IF NOT EXISTS sshdinfos (
   id            BIGSERIAL     NOT NULL,
   agent_id      INTEGER       REFERENCES agents(id),
   username      VARCHAR(32)   NOT NULL,
@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS logininfos (
   time          TIMESTAMPTZ   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-SELECT create_hypertable('logininfos', 'time');
-CREATE INDEX IF NOT EXISTS index_logininfos_on_agent_id ON logininfos(agent_id, time DESC);
+SELECT create_hypertable('sshdinfos', 'time');
+CREATE INDEX IF NOT EXISTS index_sshdinfos_on_agent_id ON sshdinfos(agent_id, time DESC);
 
 -- filemdinfos 指定文件修改删除事件统计
 CREATE TABLE IF NOT EXISTS filemdinfos (

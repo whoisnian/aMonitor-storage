@@ -1,4 +1,4 @@
-import { poolQuery } from './dbPool'
+import { poolQuery, poolTransaction } from './dbPool'
 
 const registerAgent = async (token) => {
   const sql = 'INSERT INTO agents(token) VALUES ($1) ON CONFLICT DO NOTHING'
@@ -73,6 +73,62 @@ const insertNetInfo = async (packet, agentID) => {
     agentID])
 }
 
+const insertDiskInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO diskinfos(read_req, write_req, read_size, write_size, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6)'
+  await poolQuery(sql, [
+    packet.MetaData.ReadPS,
+    packet.MetaData.WritePS,
+    packet.MetaData.ReadSize,
+    packet.MetaData.WriteSize,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
+const insertMountsInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO mountinfos(dev_name, mount_point, fs_type, total_size, free_size, avail_size, used_size_percent, total_nodes, free_nodes, used_nodes_percent, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
+  const queries = []
+
+  for (const mount of packet.MetaData.Mounts) {
+    queries.push({
+      text: sql,
+      params: [
+        mount.DevName,
+        mount.Point,
+        mount.FsType,
+        mount.TotalSize,
+        mount.FreeSize,
+        mount.AvailSize,
+        mount.UsedSizePCT,
+        mount.TotalNodes,
+        mount.FreeNodes,
+        mount.UsedNodesPCT,
+        new Date(packet.Timestamp * 1000),
+        agentID
+      ]
+    })
+  }
+  await poolTransaction(queries)
+}
+
+const insertSshdInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO sshdinfos(username, remote_host, auth_method, time, agent_id) VALUES ($1, $2, $3, $4, $5)'
+  await poolQuery(sql, [
+    packet.MetaData.Username,
+    packet.MetaData.RemoteHost,
+    packet.MetaData.AuthInfo,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
+const insertFileMDInfo = async (packet, agentID) => {
+  const sql = 'INSERT INTO filemdinfos(path, event, time, agent_id) VALUES ($1, $2, $3, $4)'
+  await poolQuery(sql, [
+    packet.MetaData.Path,
+    packet.MetaData.Event,
+    new Date(packet.Timestamp * 1000),
+    agentID])
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -80,5 +136,9 @@ export {
   insertCpuInfo,
   insertMemInfo,
   insertLoadInfo,
-  insertNetInfo
+  insertNetInfo,
+  insertDiskInfo,
+  insertMountsInfo,
+  insertSshdInfo,
+  insertFileMDInfo
 }
