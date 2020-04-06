@@ -29,6 +29,8 @@ logger.warn = (msg, time) => console.log(timeStr(time) + tag.w + msg)
 logger.error = (msg, time) => console.log(timeStr(time) + tag.e + msg)
 logger.plain = (msg, time) => console.log(timeStr(time) + ' ' + msg)
 
+logger.sql = (msg, time) => console.log(timeStr(time) + ' ' + '\x1b[1;36m' + msg + '\x1b[0m')
+
 // debug模式下记录请求耗时
 logger.reqTime = function (req, msg) {
   console.time(timeStr(req.arrival) + ' ' + req.originalUrl + ' ' + msg)
