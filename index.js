@@ -2,6 +2,7 @@ import express from 'express'
 import { config } from './module/config'
 import { logger } from './module/logger'
 import { initPool } from './module/dbPool'
+import { session } from './module/session'
 import { asyncRouter } from './module/util'
 import { wsRouter } from './router/ws'
 import { registerRouter } from './router/register'
@@ -31,6 +32,9 @@ const runServer = async () => {
     updateStatus(req.arrival)
     next()
   })
+
+  // 中间件：使用redis管理session
+  app.use(session())
 
   // 中间件：自动解析请求body中的json数据
   app.use(express.json())
