@@ -130,3 +130,14 @@ CREATE TABLE IF NOT EXISTS filemdinfos (
 
 SELECT create_hypertable('filemdinfos', 'time');
 CREATE INDEX IF NOT EXISTS index_filemdinfos_on_agent_id ON filemdinfos(agent_id, time DESC);
+
+-- users 用户基础信息
+CREATE TABLE IF NOT EXISTS users (
+  id            SERIAL          PRIMARY KEY,
+  email         VARCHAR(255)    UNIQUE NOT NULL,
+  username      VARCHAR(64)     NOT NULL,
+  password      VARCHAR(64)     NOT NULL,
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

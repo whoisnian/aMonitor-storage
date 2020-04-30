@@ -1,4 +1,4 @@
-import { randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'crypto'
 
 const asyncRouter = router => (req, res, next) =>
   Promise.resolve(router(req, res)).catch(next)
@@ -19,6 +19,9 @@ const getSQL = (text, params) => {
 const isString = (v) => { return typeof v === 'string' }
 const isNumber = (v) => { return typeof v === 'number' }
 const isHexString = (v) => { return /^[0-9A-F]+$/i.test(v) }
+
+// https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
+const isEmptyObject = (v) => { return Object.keys(v).length === 0 && v.constructor === Object }
 
 const tokenEncode = (raw, key) => {
   const iv = randomBytes(16)
@@ -41,4 +44,11 @@ const tokenDecode = (raw, key) => {
   return Buffer.concat([res1, res2]).toString('hex')
 }
 
-export { asyncRouter, getSQL, isString, isNumber, isHexString, tokenEncode, tokenDecode }
+const passwordHash = (raw, salt) => {
+  const md5 = createHash('md5')
+  md5.update(salt)
+  md5.update(raw)
+  return md5.digest('hex')
+}
+
+export { asyncRouter, getSQL, isString, isNumber, isHexString, isEmptyObject, tokenEncode, tokenDecode, passwordHash }

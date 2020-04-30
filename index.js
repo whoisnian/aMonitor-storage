@@ -3,10 +3,12 @@ import { config } from './module/config'
 import { logger } from './module/logger'
 import { initPool } from './module/dbPool'
 import { session } from './module/session'
-import { asyncRouter } from './module/util'
+import { isNumber, asyncRouter } from './module/util'
 import { wsRouter } from './router/ws'
 import { registerRouter } from './router/register'
 import { statusRouter, updateStatus } from './router/status'
+import { signInRouter, signUpRouter, logoutRouter } from './router/auth'
+import { selfRouter } from './router/user'
 
 const app = express()
 
@@ -14,12 +16,15 @@ const runServer = async () => {
   // 初始化数据库连接池
   await initPool()
 
+  // 中间件：使用redis管理session
+  app.use(session())
+
   // 中间件：记录node收到的请求
   app.use(function (req, res, next) {
     // 到达时间
     req.arrival = new Date()
     // 来源用户
-    req.from = -1
+    req.from = isNumber(req.session.userID) ? req.session.userID : -1
     // 重写res.end()，响应结束时打印日志
     config.debug && logger.reqTime(req, 'req load')
     const oldEnd = res.end
@@ -33,15 +38,20 @@ const runServer = async () => {
     next()
   })
 
-  // 中间件：使用redis管理session
-  app.use(session())
-
-  // 中间件：自动解析请求body中的json数据
+  // 中间件：自动解析请求body中的application/json数据
   app.use(express.json())
+  // 中间件：自动解析请求body中的application/x-www-form-urlencoded数据
+  app.use(express.urlencoded({ extended: true }))
 
   // 设置路由
   app.get('/status', asyncRouter(statusRouter))
   app.post('/register', asyncRouter(registerRouter))
+
+  app.post('/api/signin', asyncRouter(signInRouter))
+  app.post('/api/signup', asyncRouter(signUpRouter))
+  app.post('/api/logout', asyncRouter(logoutRouter))
+
+  app.get('/api/self', asyncRouter(selfRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {

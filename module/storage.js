@@ -129,6 +129,44 @@ const insertFileMDInfo = async (packet, agentID) => {
     agentID])
 }
 
+const insertUser = async (email, username, password) => {
+  const sql = 'INSERT INTO users(email, username, password) VALUES ($1, $2, $3)'
+  const res = await poolQuery(sql, [
+    email,
+    username,
+    password])
+  return res.rowCount === 1
+}
+
+const authUser = async (email, password) => {
+  const sql = 'SELECT id FROM users WHERE email = $1 AND password = $2'
+  const res = await poolQuery(sql, [
+    email,
+    password])
+  if (res.rowCount === 0) {
+    return -1
+  }
+  return res.rows[0].id
+}
+
+const getUserIDbyEmail = async (email) => {
+  const sql = 'SELECT id FROM users WHERE email = $1'
+  const res = await poolQuery(sql, [email])
+  if (res.rowCount === 0) {
+    return -1
+  }
+  return res.rows[0].id
+}
+
+const getUserInfobyID = async (id) => {
+  const sql = 'SELECT * FROM users WHERE id = $1'
+  const res = await poolQuery(sql, [id])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows[0]
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -140,5 +178,9 @@ export {
   insertDiskInfo,
   insertMountsInfo,
   insertSshdInfo,
-  insertFileMDInfo
+  insertFileMDInfo,
+  insertUser,
+  authUser,
+  getUserIDbyEmail,
+  getUserInfobyID
 }
