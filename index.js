@@ -2,7 +2,7 @@ import express from 'express'
 import { config } from './module/config'
 import { logger } from './module/logger'
 import { initPool } from './module/dbPool'
-import { session } from './module/session'
+import { initSession } from './module/session'
 import { isNumber, asyncRouter } from './module/util'
 import { wsRouter } from './router/ws'
 import { registerRouter } from './router/register'
@@ -17,7 +17,8 @@ const runServer = async () => {
   await initPool()
 
   // 中间件：使用redis管理session
-  app.use(session())
+  const session = await initSession()
+  app.use(session)
 
   // 中间件：记录node收到的请求
   app.use(function (req, res, next) {
