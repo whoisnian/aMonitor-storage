@@ -167,6 +167,24 @@ const getUserInfobyID = async (id) => {
   return res.rows[0]
 }
 
+const getAllAgents = async () => {
+  const sql = 'SELECT id, distro, hostname FROM agents WHERE deleted = $1'
+  const res = await poolQuery(sql, [false])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const getAgentInfobyID = async (id) => {
+  const sql = 'SELECT id, distro, kernel, hostname, cpu_model, cpu_cores FROM agents WHERE id = $1'
+  const res = await poolQuery(sql, [id])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows[0]
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -182,5 +200,7 @@ export {
   insertUser,
   authUser,
   getUserIDbyEmail,
-  getUserInfobyID
+  getUserInfobyID,
+  getAllAgents,
+  getAgentInfobyID
 }
