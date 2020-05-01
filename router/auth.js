@@ -8,7 +8,7 @@ const signInRouter = async (req, res) => {
   const email = req.body.email
   const password = req.body.password
 
-  if (!emailRegex.test(email) || password.length < 6) {
+  if (!emailRegex.test(email) || password.length < 1) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
@@ -21,7 +21,7 @@ const signInRouter = async (req, res) => {
   }
 
   req.session.userID = id
-  res.status(200).end()
+  res.status(200).send({ result: 'success' })
 }
 
 const signUpRouter = async (req, res) => {
@@ -47,7 +47,7 @@ const signUpRouter = async (req, res) => {
   }
 
   req.session.userID = id
-  res.status(200).end()
+  res.status(200).send({ result: 'success' })
 }
 
 const logoutRouter = async (req, res) => {
@@ -55,7 +55,7 @@ const logoutRouter = async (req, res) => {
     req.session.destroy(() => resolve())
   })
 
-  res.status(200).end()
+  res.status(200).send({ result: 'success' })
 }
 
 export { signInRouter, signUpRouter, logoutRouter }
