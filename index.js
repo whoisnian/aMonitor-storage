@@ -3,7 +3,7 @@ import { config } from './module/config'
 import { logger } from './module/logger'
 import { initPool } from './module/dbPool'
 import { initSession } from './module/session'
-import { isNumber, asyncRouter } from './module/util'
+import { isNumber, asyncRouter, loginRequired } from './module/util'
 import { wsRouter } from './router/ws'
 import { registerRouter } from './router/register'
 import { statusRouter, updateStatus } from './router/status'
@@ -52,7 +52,7 @@ const runServer = async () => {
   app.post('/api/signup', asyncRouter(signUpRouter))
   app.post('/api/logout', asyncRouter(logoutRouter))
 
-  app.get('/api/self', asyncRouter(selfRouter))
+  app.get('/api/self', loginRequired, asyncRouter(selfRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {

@@ -3,6 +3,14 @@ import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'crypt
 const asyncRouter = router => (req, res, next) =>
   Promise.resolve(router(req, res)).catch(next)
 
+const loginRequired = (req, res, next) => {
+  if (!isNumber(req.session.userID) || req.session.userID === -1) {
+    res.status(401).send({ error_type: 'UNAUTHORIZED' })
+  } else {
+    next()
+  }
+}
+
 const getSQL = (text, params) => {
   if (!params) return text
   return params.reduce((q, v, i) => {
@@ -51,4 +59,15 @@ const passwordHash = (raw, salt) => {
   return md5.digest('hex')
 }
 
-export { asyncRouter, getSQL, isString, isNumber, isHexString, isEmptyObject, tokenEncode, tokenDecode, passwordHash }
+export {
+  asyncRouter,
+  loginRequired,
+  getSQL,
+  isString,
+  isNumber,
+  isHexString,
+  isEmptyObject,
+  tokenEncode,
+  tokenDecode,
+  passwordHash
+}
