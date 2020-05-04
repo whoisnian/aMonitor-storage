@@ -48,7 +48,8 @@ const signUpRouter = async (req, res) => {
     return
   }
 
-  req.session.userID = id
+  req.session.userID = await getUserIDbyEmail(email)
+
   res.status(200).send({ result: 'success' })
 }
 
