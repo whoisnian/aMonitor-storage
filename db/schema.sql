@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS agents (
   hostname      VARCHAR(255)    NOT NULL DEFAULT 'unknown',
   cpu_model     VARCHAR(255)    NOT NULL DEFAULT 'unknown',
   cpu_cores     SMALLINT        NOT NULL DEFAULT 0,
+  ip            VARCHAR(255)    NOT NULL DEFAULT 'unknown',
   deleted       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP

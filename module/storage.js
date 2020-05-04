@@ -27,6 +27,11 @@ const updateBasicInfo = async (packet, agentID) => {
     agentID])
 }
 
+const updateIPAddress = async (ip, agentID) => {
+  const sql = 'UPDATE agents SET ip = $1 where id = $2'
+  await poolQuery(sql, [ip, agentID])
+}
+
 const insertCpuInfo = async (packet, agentID) => {
   const sql = 'INSERT INTO cpuinfos(used_percent, time, agent_id) VALUES ($1, $2, $3)'
   await poolQuery(sql, [
@@ -189,6 +194,7 @@ export {
   registerAgent,
   getAgentIDbyToken,
   updateBasicInfo,
+  updateIPAddress,
   insertCpuInfo,
   insertMemInfo,
   insertLoadInfo,

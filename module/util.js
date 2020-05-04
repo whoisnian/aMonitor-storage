@@ -24,6 +24,16 @@ const getSQL = (text, params) => {
   }, text)
 }
 
+const getClientIP = (req) => {
+  let ip = ''
+  if (req.headers['x-nginx-proxy']) {
+    ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for'].split(',')[0].trim()
+  }
+  ip = ip || req.socket.remoteAddress
+
+  return ip
+}
+
 const isString = (v) => { return typeof v === 'string' }
 const isNumber = (v) => { return typeof v === 'number' }
 const isHexString = (v) => { return /^[0-9A-F]+$/i.test(v) }
@@ -63,6 +73,7 @@ export {
   asyncRouter,
   loginRequired,
   getSQL,
+  getClientIP,
   isString,
   isNumber,
   isHexString,

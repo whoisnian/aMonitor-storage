@@ -4,6 +4,7 @@ import { logger } from '../module/logger'
 import {
   getAgentIDbyToken,
   updateBasicInfo,
+  updateIPAddress,
   insertCpuInfo,
   insertMemInfo,
   insertLoadInfo,
@@ -13,6 +14,7 @@ import {
   insertSshdInfo,
   insertFileMDInfo
 } from '../module/storage'
+import { getClientIP } from '../module/util'
 
 const wsServer = new WebSocketServer({ noServer: true })
 
@@ -27,6 +29,7 @@ wsServer.on('connection', (ws, req) => {
     switch (packet.Category) {
       case 'basicInfo':
         updateBasicInfo(packet, req.from)
+        updateIPAddress(getClientIP(req), req.from)
         break
       case 'cpuInfo':
         insertCpuInfo(packet, req.from)
