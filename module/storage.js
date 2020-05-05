@@ -173,7 +173,7 @@ const getUserInfobyID = async (id) => {
 }
 
 const getAllAgents = async (deleted = false) => {
-  const sql = 'SELECT id, distro, hostname, ip, deleted FROM agents WHERE deleted = $1'
+  const sql = 'SELECT id, distro, hostname, ip, deleted FROM agents WHERE deleted = $1 ORDER BY id'
   const res = await poolQuery(sql, [deleted])
   if (res.rowCount === 0) {
     return null
@@ -182,7 +182,7 @@ const getAllAgents = async (deleted = false) => {
 }
 
 const getAgentInfobyID = async (id) => {
-  const sql = 'SELECT id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted FROM agents WHERE id = $1'
+  const sql = 'SELECT id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted FROM agents WHERE id = $1 ORDER BY id'
   const res = await poolQuery(sql, [id])
   if (res.rowCount === 0) {
     return null
