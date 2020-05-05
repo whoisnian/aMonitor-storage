@@ -172,9 +172,9 @@ const getUserInfobyID = async (id) => {
   return res.rows[0]
 }
 
-const getAllAgents = async () => {
-  const sql = 'SELECT id, distro, hostname FROM agents WHERE deleted = $1'
-  const res = await poolQuery(sql, [false])
+const getAllAgents = async (deleted = false) => {
+  const sql = 'SELECT id, distro, hostname, ip, deleted FROM agents WHERE deleted = $1'
+  const res = await poolQuery(sql, [deleted])
   if (res.rowCount === 0) {
     return null
   }
@@ -182,12 +182,22 @@ const getAllAgents = async () => {
 }
 
 const getAgentInfobyID = async (id) => {
-  const sql = 'SELECT id, distro, kernel, hostname, cpu_model, cpu_cores FROM agents WHERE id = $1'
+  const sql = 'SELECT id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted FROM agents WHERE id = $1'
   const res = await poolQuery(sql, [id])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows[0]
+}
+
+const deleteAgentbyID = async (id) => {
+  const sql = 'UPDATE agents SET deleted = $1 where id = $2'
+  await poolQuery(sql, [true, id])
+}
+
+const recoverAgentbyID = async (id) => {
+  const sql = 'UPDATE agents SET deleted = $1 where id = $2'
+  await poolQuery(sql, [false, id])
 }
 
 export {
@@ -208,5 +218,7 @@ export {
   getUserIDbyEmail,
   getUserInfobyID,
   getAllAgents,
-  getAgentInfobyID
+  getAgentInfobyID,
+  deleteAgentbyID,
+  recoverAgentbyID
 }
