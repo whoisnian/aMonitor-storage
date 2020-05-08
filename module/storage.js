@@ -81,10 +81,12 @@ const insertNetInfo = async (packet, agentID) => {
 }
 
 const insertDiskInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO diskinfos(read_req, write_req, read_size, write_size, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6)'
+  const sql = 'INSERT INTO diskinfos(read_req, write_req, read_rate, write_rate, read_size, write_size, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
   await poolQuery(sql, [
     packet.MetaData.ReadPS,
     packet.MetaData.WritePS,
+    packet.MetaData.ReadRate,
+    packet.MetaData.WriteRate,
     packet.MetaData.ReadSize,
     packet.MetaData.WriteSize,
     new Date(packet.Timestamp * 1000),

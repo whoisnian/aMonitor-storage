@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS diskinfos (
   agent_id      INTEGER       REFERENCES agents(id),
   read_req      INTEGER       NOT NULL,
   write_req     INTEGER       NOT NULL,
+  read_rate     INTEGER       NOT NULL,
+  write_rate    INTEGER       NOT NULL,
   read_size     BIGINT        NOT NULL,
   write_size    BIGINT        NOT NULL,
   time          TIMESTAMPTZ   NOT NULL DEFAULT CURRENT_TIMESTAMP
