@@ -204,6 +204,78 @@ const recoverAgentbyID = async (id) => {
   await poolQuery(sql, [false, id])
 }
 
+const batchCpuInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, used_percent FROM cpuinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchMemInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, ram_used_percent, swap_used_percent FROM meminfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchLoadInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, avg1, avg5, avg15 FROM loadinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchNetInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, receive_rate, receive_packets, transmit_rate, transmit_packets FROM netinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchDiskInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, read_req, write_req, read_rate, write_rate FROM diskinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchMountsInfobyID = async (id) => {
+  const sql = 'SELECT dev_name, last(mount_point, time) as mount_point, last(fs_type, time) as fs_type, last(total_size, time) as total_size, last(avail_size, time) as avail_size, last(used_size_percent, time) as used_size_percent, last(used_nodes_percent, time) as used_nodes_percent FROM mountinfos WHERE agent_id = $1 GROUP BY dev_name ORDER BY dev_name'
+  const res = await poolQuery(sql, [id])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchSshdInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, username, remote_host, auth_method FROM sshdinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time DESC'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const batchFileMDInfobyID = async (id, from, to) => {
+  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, path, event FROM filemdinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time DESC'
+  const res = await poolQuery(sql, [id, from, to])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -224,5 +296,13 @@ export {
   getAllAgents,
   getAgentInfobyID,
   deleteAgentbyID,
-  recoverAgentbyID
+  recoverAgentbyID,
+  batchCpuInfobyID,
+  batchMemInfobyID,
+  batchLoadInfobyID,
+  batchNetInfobyID,
+  batchDiskInfobyID,
+  batchMountsInfobyID,
+  batchSshdInfobyID,
+  batchFileMDInfobyID
 }

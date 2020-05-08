@@ -10,6 +10,7 @@ import { statusRouter, updateStatus } from './router/status'
 import { signInRouter, signUpRouter, logoutRouter } from './router/auth'
 import { selfRouter } from './router/user'
 import { allAgentsRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
+import { dataRouter } from './router/data'
 
 const app = express()
 
@@ -59,6 +60,8 @@ const runServer = async () => {
   app.delete('/api/agent/:agentID', loginRequired, asyncRouter(deleteAgentRouter))
   app.put('/api/agent/:agentID', loginRequired, asyncRouter(recoverAgentRouter))
   app.get('/api/agent/:agentID', loginRequired, asyncRouter(agentInfoRouter))
+
+  app.get('/api/data/:agentID/:category', loginRequired, asyncRouter(dataRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {
