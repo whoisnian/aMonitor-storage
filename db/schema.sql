@@ -61,13 +61,15 @@ CREATE INDEX IF NOT EXISTS index_loadinfos_on_agent_id ON loadinfos(agent_id, ti
 
 -- netinfos 流量统计
 CREATE TABLE IF NOT EXISTS netinfos (
-  id              BIGSERIAL     NOT NULL,
-  agent_id        INTEGER       REFERENCES agents(id),
-  receive_rate    INTEGER       NOT NULL,
-  receive_sum     BIGINT        NOT NULL,
-  transmit_rate   INTEGER       NOT NULL,
-  transmit_sum    BIGINT        NOT NULL,
-  time            TIMESTAMPTZ   NOT NULL DEFAULT CURRENT_TIMESTAMP
+  id                BIGSERIAL     NOT NULL,
+  agent_id          INTEGER       REFERENCES agents(id),
+  receive_rate      INTEGER       NOT NULL,
+  receive_sum       BIGINT        NOT NULL,
+  receive_packets   INTEGER       NOT NULL,
+  transmit_rate     INTEGER       NOT NULL,
+  transmit_sum      BIGINT        NOT NULL,
+  transmit_packets  INTEGER       NOT NULL,
+  time              TIMESTAMPTZ   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 SELECT create_hypertable('netinfos', 'time');

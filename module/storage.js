@@ -68,12 +68,14 @@ const insertLoadInfo = async (packet, agentID) => {
 }
 
 const insertNetInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO netinfos(receive_rate, receive_sum, transmit_rate, transmit_sum, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6)'
+  const sql = 'INSERT INTO netinfos(receive_rate, receive_sum, receive_packets, transmit_rate, transmit_sum, transmit_packets, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
   await poolQuery(sql, [
     packet.MetaData.Rrate,
     packet.MetaData.Rsum,
+    packet.MetaData.Rpackets,
     packet.MetaData.Trate,
     packet.MetaData.Tsum,
+    packet.MetaData.Tpackets,
     new Date(packet.Timestamp * 1000),
     agentID])
 }
