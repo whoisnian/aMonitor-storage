@@ -1,13 +1,21 @@
 import { poolQuery, poolTransaction } from './dbPool'
 
 const registerAgent = async (token) => {
-  const sql = 'INSERT INTO agents(token) VALUES ($1) ON CONFLICT DO NOTHING'
+  const sql =
+  'INSERT ' +
+  'INTO agents(token) ' +
+  'VALUES ($1) ' +
+  'ON CONFLICT DO NOTHING'
   const res = await poolQuery(sql, [token])
   return res.rowCount === 1
 }
 
 const getAgentIDbyToken = async (token) => {
-  const sql = 'SELECT id FROM agents WHERE token = $1'
+  const sql =
+  'SELECT ' +
+  'id ' +
+  'FROM agents ' +
+  'WHERE token = $1'
   const res = await poolQuery(sql, [token])
   if (res.rowCount === 0) {
     return -1
@@ -16,7 +24,11 @@ const getAgentIDbyToken = async (token) => {
 }
 
 const updateBasicInfo = async (packet, agentID) => {
-  const sql = 'UPDATE agents SET (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) where id = $7'
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) ' +
+  'WHERE id = $7'
   await poolQuery(sql, [
     packet.MetaData.Distro,
     packet.MetaData.Kernel,
@@ -28,12 +40,19 @@ const updateBasicInfo = async (packet, agentID) => {
 }
 
 const updateIPAddress = async (ip, agentID) => {
-  const sql = 'UPDATE agents SET ip = $1 where id = $2'
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET ip = $1 ' +
+  'WHERE id = $2'
   await poolQuery(sql, [ip, agentID])
 }
 
 const insertCpuInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO cpuinfos(used_percent, time, agent_id) VALUES ($1, $2, $3)'
+  const sql =
+  'INSERT ' +
+  'INTO cpuinfos(used_percent, time, agent_id) ' +
+  'VALUES ($1, $2, $3)'
   await poolQuery(sql, [
     packet.MetaData.UsedPCT,
     new Date(packet.Timestamp * 1000),
@@ -41,7 +60,10 @@ const insertCpuInfo = async (packet, agentID) => {
 }
 
 const insertMemInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO meminfos(ram_total, ram_cached, ram_used, ram_free, ram_avail, ram_used_percent, swap_total, swap_used, swap_free, swap_used_percent, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
+  const sql =
+  'INSERT ' +
+  'INTO meminfos(ram_total, ram_cached, ram_used, ram_free, ram_avail, ram_used_percent, swap_total, swap_used, swap_free, swap_used_percent, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
   await poolQuery(sql, [
     packet.MetaData.RAMTotal,
     packet.MetaData.RAMCached,
@@ -58,7 +80,10 @@ const insertMemInfo = async (packet, agentID) => {
 }
 
 const insertLoadInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO loadinfos(avg1, avg5, avg15, time, agent_id) VALUES ($1, $2, $3, $4, $5)'
+  const sql =
+  'INSERT ' +
+  'INTO loadinfos(avg1, avg5, avg15, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5)'
   await poolQuery(sql, [
     packet.MetaData.Avg1,
     packet.MetaData.Avg5,
@@ -68,7 +93,10 @@ const insertLoadInfo = async (packet, agentID) => {
 }
 
 const insertNetInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO netinfos(receive_rate, receive_sum, receive_packets, transmit_rate, transmit_sum, transmit_packets, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+  const sql =
+  'INSERT ' +
+  'INTO netinfos(receive_rate, receive_sum, receive_packets, transmit_rate, transmit_sum, transmit_packets, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
   await poolQuery(sql, [
     packet.MetaData.Rrate,
     packet.MetaData.Rsum,
@@ -81,7 +109,10 @@ const insertNetInfo = async (packet, agentID) => {
 }
 
 const insertDiskInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO diskinfos(read_req, write_req, read_rate, write_rate, read_size, write_size, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+  const sql =
+  'INSERT ' +
+  'INTO diskinfos(read_req, write_req, read_rate, write_rate, read_size, write_size, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
   await poolQuery(sql, [
     packet.MetaData.ReadPS,
     packet.MetaData.WritePS,
@@ -94,7 +125,10 @@ const insertDiskInfo = async (packet, agentID) => {
 }
 
 const insertMountsInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO mountinfos(dev_name, mount_point, fs_type, total_size, free_size, avail_size, used_size_percent, total_nodes, free_nodes, used_nodes_percent, time, agent_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
+  const sql =
+  'INSERT ' +
+  'INTO mountinfos(dev_name, mount_point, fs_type, total_size, free_size, avail_size, used_size_percent, total_nodes, free_nodes, used_nodes_percent, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)'
   const queries = []
 
   for (const mount of packet.MetaData.Mounts) {
@@ -120,7 +154,10 @@ const insertMountsInfo = async (packet, agentID) => {
 }
 
 const insertSshdInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO sshdinfos(username, remote_host, auth_method, time, agent_id) VALUES ($1, $2, $3, $4, $5)'
+  const sql =
+  'INSERT ' +
+  'INTO sshdinfos(username, remote_host, auth_method, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4, $5)'
   await poolQuery(sql, [
     packet.MetaData.Username,
     packet.MetaData.RemoteHost,
@@ -130,7 +167,10 @@ const insertSshdInfo = async (packet, agentID) => {
 }
 
 const insertFileMDInfo = async (packet, agentID) => {
-  const sql = 'INSERT INTO filemdinfos(path, event, time, agent_id) VALUES ($1, $2, $3, $4)'
+  const sql =
+  'INSERT ' +
+  'INTO filemdinfos(path, event, time, agent_id) ' +
+  'VALUES ($1, $2, $3, $4)'
   await poolQuery(sql, [
     packet.MetaData.Path,
     packet.MetaData.Event,
@@ -139,7 +179,10 @@ const insertFileMDInfo = async (packet, agentID) => {
 }
 
 const insertUser = async (email, username, password) => {
-  const sql = 'INSERT INTO users(email, username, password) VALUES ($1, $2, $3)'
+  const sql =
+  'INSERT ' +
+  'INTO users(email, username, password) ' +
+  'VALUES ($1, $2, $3)'
   const res = await poolQuery(sql, [
     email,
     username,
@@ -148,7 +191,11 @@ const insertUser = async (email, username, password) => {
 }
 
 const authUser = async (email, password) => {
-  const sql = 'SELECT id FROM users WHERE email = $1 AND password = $2'
+  const sql =
+  'SELECT ' +
+  'id ' +
+  'FROM users ' +
+  'WHERE email = $1 AND password = $2'
   const res = await poolQuery(sql, [
     email,
     password])
@@ -159,7 +206,11 @@ const authUser = async (email, password) => {
 }
 
 const getUserIDbyEmail = async (email) => {
-  const sql = 'SELECT id FROM users WHERE email = $1'
+  const sql =
+  'SELECT ' +
+  'id ' +
+  'FROM users ' +
+  'WHERE email = $1'
   const res = await poolQuery(sql, [email])
   if (res.rowCount === 0) {
     return -1
@@ -168,7 +219,11 @@ const getUserIDbyEmail = async (email) => {
 }
 
 const getUserInfobyID = async (id) => {
-  const sql = 'SELECT * FROM users WHERE id = $1'
+  const sql =
+  'SELECT ' +
+  '* ' +
+  'FROM users ' +
+  'WHERE id = $1'
   const res = await poolQuery(sql, [id])
   if (res.rowCount === 0) {
     return null
@@ -177,7 +232,12 @@ const getUserInfobyID = async (id) => {
 }
 
 const getAllAgents = async (deleted = false) => {
-  const sql = 'SELECT id, distro, hostname, ip, deleted FROM agents WHERE deleted = $1 ORDER BY id'
+  const sql =
+  'SELECT ' +
+  'id, distro, hostname, ip, deleted ' +
+  'FROM agents ' +
+  'WHERE deleted = $1 ' +
+  'ORDER BY id'
   const res = await poolQuery(sql, [deleted])
   if (res.rowCount === 0) {
     return null
@@ -186,7 +246,12 @@ const getAllAgents = async (deleted = false) => {
 }
 
 const getAgentInfobyID = async (id) => {
-  const sql = 'SELECT id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted FROM agents WHERE id = $1 ORDER BY id'
+  const sql =
+  'SELECT ' +
+  'id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted ' +
+  'FROM agents ' +
+  'WHERE id = $1 ' +
+  'ORDER BY id'
   const res = await poolQuery(sql, [id])
   if (res.rowCount === 0) {
     return null
@@ -195,17 +260,32 @@ const getAgentInfobyID = async (id) => {
 }
 
 const deleteAgentbyID = async (id) => {
-  const sql = 'UPDATE agents SET deleted = $1 where id = $2'
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
   await poolQuery(sql, [true, id])
 }
 
 const recoverAgentbyID = async (id) => {
-  const sql = 'UPDATE agents SET deleted = $1 where id = $2'
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
   await poolQuery(sql, [false, id])
 }
 
 const batchCpuInfobyID = async (id, from, to, bucket) => {
-  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(used_percent)) as used_percent FROM cpuinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const sql =
+  'SELECT ' +
+  'time_bucket($1, time) as bucket_time, ' +
+  'floor(avg(used_percent)) as used_percent ' +
+  'FROM cpuinfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4 ' +
+  'GROUP BY bucket_time ' +
+  'ORDER BY bucket_time'
   const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -214,7 +294,15 @@ const batchCpuInfobyID = async (id, from, to, bucket) => {
 }
 
 const batchMemInfobyID = async (id, from, to, bucket) => {
-  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(ram_used_percent)) as ram_used_percent, floor(avg(swap_used_percent)) as swap_used_percent FROM meminfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const sql =
+  'SELECT ' +
+  'time_bucket($1, time) as bucket_time, ' +
+  'floor(avg(ram_used_percent)) as ram_used_percent, ' +
+  'floor(avg(swap_used_percent)) as swap_used_percent ' +
+  'FROM meminfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4 ' +
+  'GROUP BY bucket_time ' +
+  'ORDER BY bucket_time'
   const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -223,7 +311,16 @@ const batchMemInfobyID = async (id, from, to, bucket) => {
 }
 
 const batchLoadInfobyID = async (id, from, to, bucket) => {
-  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(avg1)) as avg1, floor(avg(avg5)) as avg5, floor(avg(avg15)) as avg15 FROM loadinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const sql =
+  'SELECT ' +
+  'time_bucket($1, time) as bucket_time, ' +
+  'floor(avg(avg1)) as avg1, ' +
+  'floor(avg(avg5)) as avg5, ' +
+  'floor(avg(avg15)) as avg15 ' +
+  'FROM loadinfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4 ' +
+  'GROUP BY bucket_time ' +
+  'ORDER BY bucket_time'
   const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -232,7 +329,17 @@ const batchLoadInfobyID = async (id, from, to, bucket) => {
 }
 
 const batchNetInfobyID = async (id, from, to, bucket) => {
-  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(receive_rate)) as receive_rate, floor(avg(receive_packets)) as receive_packets, floor(avg(transmit_rate)) as transmit_rate, floor(avg(transmit_packets)) as transmit_packets FROM netinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const sql =
+  'SELECT ' +
+  'time_bucket($1, time) as bucket_time, ' +
+  'floor(avg(receive_rate)) as receive_rate, ' +
+  'floor(avg(receive_packets)) as receive_packets, ' +
+  'floor(avg(transmit_rate)) as transmit_rate, ' +
+  'floor(avg(transmit_packets)) as transmit_packets ' +
+  'FROM netinfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4 ' +
+  'GROUP BY bucket_time ' +
+  'ORDER BY bucket_time'
   const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -241,7 +348,17 @@ const batchNetInfobyID = async (id, from, to, bucket) => {
 }
 
 const batchDiskInfobyID = async (id, from, to, bucket) => {
-  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(read_req)) as read_req, floor(avg(write_req)) as write_req, floor(avg(read_rate)) as read_rate, floor(avg(write_rate)) as write_rate FROM diskinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const sql =
+  'SELECT ' +
+  'time_bucket($1, time) as bucket_time, ' +
+  'floor(avg(read_req)) as read_req, ' +
+  'floor(avg(write_req)) as write_req, ' +
+  'floor(avg(read_rate)) as read_rate, ' +
+  'floor(avg(write_rate)) as write_rate ' +
+  'FROM diskinfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4 ' +
+  'GROUP BY bucket_time ' +
+  'ORDER BY bucket_time'
   const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -250,7 +367,19 @@ const batchDiskInfobyID = async (id, from, to, bucket) => {
 }
 
 const batchMountsInfobyID = async (id) => {
-  const sql = 'SELECT dev_name, last(mount_point, time) as mount_point, last(fs_type, time) as fs_type, last(total_size, time) as total_size, last(avail_size, time) as avail_size, last(used_size_percent, time) as used_size_percent, last(used_nodes_percent, time) as used_nodes_percent FROM mountinfos WHERE agent_id = $1 GROUP BY dev_name ORDER BY dev_name'
+  const sql =
+  'SELECT ' +
+  'dev_name, ' +
+  'last(mount_point, time) as mount_point, ' +
+  'last(fs_type, time) as fs_type, ' +
+  'last(total_size, time) as total_size, ' +
+  'last(avail_size, time) as avail_size, ' +
+  'last(used_size_percent, time) as used_size_percent, ' +
+  'last(used_nodes_percent, time) as used_nodes_percent ' +
+  'FROM mountinfos ' +
+  'WHERE agent_id = $1 ' +
+  'GROUP BY dev_name ' +
+  'ORDER BY dev_name'
   const res = await poolQuery(sql, [id])
   if (res.rowCount === 0) {
     return null
@@ -259,7 +388,13 @@ const batchMountsInfobyID = async (id) => {
 }
 
 const batchSshdInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, username, remote_host, auth_method FROM sshdinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time DESC'
+  const sql =
+  'SELECT ' +
+  'EXTRACT(EPOCH FROM time)*1000 as time, ' +
+  'username, remote_host, auth_method ' +
+  'FROM sshdinfos ' +
+  'WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ' +
+  'ORDER BY time DESC'
   const res = await poolQuery(sql, [id, from, to])
   if (res.rowCount === 0) {
     return null
@@ -268,7 +403,13 @@ const batchSshdInfobyID = async (id, from, to) => {
 }
 
 const batchFileMDInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, path, event FROM filemdinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time DESC'
+  const sql =
+  'SELECT ' +
+  'EXTRACT(EPOCH FROM time)*1000 as time, ' +
+  'path, event ' +
+  'FROM filemdinfos ' +
+  'WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ' +
+  'ORDER BY time DESC'
   const res = await poolQuery(sql, [id, from, to])
   if (res.rowCount === 0) {
     return null
