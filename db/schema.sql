@@ -146,3 +146,36 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- rules 监控规则
+CREATE TABLE IF NOT EXISTS rules (
+  id            SERIAL          PRIMARY KEY,
+  name          VARCHAR(255)    NOT NULL,
+  target        VARCHAR(255)    NOT NULL,
+  event         VARCHAR(255)    NOT NULL,
+  threshold     INTEGER         NOT NULL,
+  interval      INTEGER         NOT NULL,
+  level         VARCHAR(64)     NOT NULL,
+  group_id      INTEGER         REFERENCES rulegroups(id),
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- rulegroups 规则组
+CREATE TABLE IF NOT EXISTS rulegroups (
+  id            SERIAL          PRIMARY KEY,
+  name          VARCHAR(255)    NOT NULL,
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- agentrules 主机所用规则
+CREATE TABLE IF NOT EXISTS agentrules (
+  id            SERIAL          PRIMARY KEY,
+  agent_id      INTEGER         REFERENCES agents(id),
+  rule_id       INTEGER         REFERENCES rules(id),
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

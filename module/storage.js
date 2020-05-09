@@ -417,6 +417,80 @@ const batchFileMDInfobyID = async (id, from, to) => {
   return res.rows
 }
 
+const insertRule = async (name, target, event, threshold, interval, level, groupID) => {
+  const sql =
+  'INSERT ' +
+  'INTO rules(name, target, event, threshold, interval, level, group_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7)'
+  await poolQuery(sql, [
+    name,
+    target,
+    event,
+    threshold,
+    interval,
+    level,
+    groupID])
+}
+
+const insertRuleGroup = async (name) => {
+  const sql =
+  'INSERT ' +
+  'INTO rulegroups(name) ' +
+  'VALUES ($1)'
+  await poolQuery(sql, [name])
+}
+
+const insertAgentrule = async (agentID, ruleID) => {
+  const sql =
+  'INSERT ' +
+  'INTO agentrules(agent_id, rule_id) ' +
+  'VALUES ($1, $2)'
+  await poolQuery(sql, [agentID, ruleID])
+}
+
+const getAllRuleGroups = async (deleted) => {
+  const sql =
+  'SELECT ' +
+  'id, name, created_at ' +
+  'FROM rulegroups ' +
+  'WHERE deleted = $1 ' +
+  'ORDER BY id'
+  const res = await poolQuery(sql, [deleted])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const getRulesbyGroupID = async (groupID) => {
+  const sql =
+  'SELECT ' +
+  'id, name, target, event, threshold, interval, level, group_id ' +
+  'FROM rules ' +
+  'WHERE deleted = false AND group_id = $1 ' +
+  'ORDER BY id'
+  const res = await poolQuery(sql, [groupID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const getRulesbyAgentID = async (AgentID) => {
+  const sql =
+  'SELECT ' +
+  'agentrules.rule_id, rules.name, rules.target, rules.event, rules.threshold, rules.interval, rules.level, rules.group_id ' +
+  'FROM agentrules ' +
+  'WHERE agent_id = $1 ' +
+  'INNER JOIN rules ON rules.id = rule_id' +
+  'ORDER BY rule_id'
+  const res = await poolQuery(sql, [AgentID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -445,5 +519,11 @@ export {
   batchDiskInfobyID,
   batchMountsInfobyID,
   batchSshdInfobyID,
-  batchFileMDInfobyID
+  batchFileMDInfobyID,
+  insertRule,
+  insertRuleGroup,
+  insertAgentrule,
+  getAllRuleGroups,
+  getRulesbyGroupID,
+  getRulesbyAgentID
 }
