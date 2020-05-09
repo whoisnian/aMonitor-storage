@@ -21,11 +21,14 @@ const dataRouter = async (req, res) => {
   const from = new Date(fromInt)
   const to = new Date(toInt)
 
+  // 可视化性能优化，监控数据查询聚合为100个关键点
+  const bucket = Math.floor((toInt - fromInt) / 100000) + ' seconds'
+
   let infos, payload
   const category = req.params.category
   switch (category) {
     case 'cpuinfo':
-      infos = await batchCpuInfobyID(agentID, from, to)
+      infos = await batchCpuInfobyID(agentID, from, to, bucket)
       if (!infos) {
         res.status(200).send([])
         return
@@ -33,14 +36,14 @@ const dataRouter = async (req, res) => {
 
       payload = infos.map((info) => {
         return {
-          time: info.time,
+          time: info.bucket_time,
           used_percent: info.used_percent
         }
       })
       res.status(200).send(payload)
       break
     case 'meminfo':
-      infos = await batchMemInfobyID(agentID, from, to)
+      infos = await batchMemInfobyID(agentID, from, to, bucket)
       if (!infos) {
         res.status(200).send([])
         return
@@ -48,7 +51,7 @@ const dataRouter = async (req, res) => {
 
       payload = infos.map((info) => {
         return {
-          time: info.time,
+          time: info.bucket_time,
           ram_used_percent: info.ram_used_percent,
           swap_used_percent: info.swap_used_percent
         }
@@ -56,7 +59,7 @@ const dataRouter = async (req, res) => {
       res.status(200).send(payload)
       break
     case 'loadinfo':
-      infos = await batchLoadInfobyID(agentID, from, to)
+      infos = await batchLoadInfobyID(agentID, from, to, bucket)
       if (!infos) {
         res.status(200).send([])
         return
@@ -64,7 +67,7 @@ const dataRouter = async (req, res) => {
 
       payload = infos.map((info) => {
         return {
-          time: info.time,
+          time: info.bucket_time,
           avg1: info.avg1,
           avg5: info.avg5,
           avg15: info.avg15
@@ -73,7 +76,7 @@ const dataRouter = async (req, res) => {
       res.status(200).send(payload)
       break
     case 'netinfo':
-      infos = await batchNetInfobyID(agentID, from, to)
+      infos = await batchNetInfobyID(agentID, from, to, bucket)
       if (!infos) {
         res.status(200).send([])
         return
@@ -81,7 +84,7 @@ const dataRouter = async (req, res) => {
 
       payload = infos.map((info) => {
         return {
-          time: info.time,
+          time: info.bucket_time,
           receive_rate: info.receive_rate,
           receive_packets: info.receive_packets,
           transmit_rate: info.transmit_rate,
@@ -91,7 +94,7 @@ const dataRouter = async (req, res) => {
       res.status(200).send(payload)
       break
     case 'diskinfo':
-      infos = await batchDiskInfobyID(agentID, from, to)
+      infos = await batchDiskInfobyID(agentID, from, to, bucket)
       if (!infos) {
         res.status(200).send([])
         return
@@ -99,7 +102,7 @@ const dataRouter = async (req, res) => {
 
       payload = infos.map((info) => {
         return {
-          time: info.time,
+          time: info.bucket_time,
           read_req: info.read_req,
           write_req: info.write_req,
           read_rate: info.read_rate,

@@ -204,45 +204,45 @@ const recoverAgentbyID = async (id) => {
   await poolQuery(sql, [false, id])
 }
 
-const batchCpuInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, used_percent FROM cpuinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
-  const res = await poolQuery(sql, [id, from, to])
+const batchCpuInfobyID = async (id, from, to, bucket) => {
+  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(used_percent)) as used_percent FROM cpuinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows
 }
 
-const batchMemInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, ram_used_percent, swap_used_percent FROM meminfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
-  const res = await poolQuery(sql, [id, from, to])
+const batchMemInfobyID = async (id, from, to, bucket) => {
+  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(ram_used_percent)) as ram_used_percent, floor(avg(swap_used_percent)) as swap_used_percent FROM meminfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows
 }
 
-const batchLoadInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, avg1, avg5, avg15 FROM loadinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
-  const res = await poolQuery(sql, [id, from, to])
+const batchLoadInfobyID = async (id, from, to, bucket) => {
+  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(avg1)) as avg1, floor(avg(avg5)) as avg5, floor(avg(avg15)) as avg15 FROM loadinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows
 }
 
-const batchNetInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, receive_rate, receive_packets, transmit_rate, transmit_packets FROM netinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
-  const res = await poolQuery(sql, [id, from, to])
+const batchNetInfobyID = async (id, from, to, bucket) => {
+  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(receive_rate)) as receive_rate, floor(avg(receive_packets)) as receive_packets, floor(avg(transmit_rate)) as transmit_rate, floor(avg(transmit_packets)) as transmit_packets FROM netinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows
 }
 
-const batchDiskInfobyID = async (id, from, to) => {
-  const sql = 'SELECT EXTRACT(EPOCH FROM time)*1000 as time, read_req, write_req, read_rate, write_rate FROM diskinfos WHERE agent_id = $1 AND time BETWEEN $2 AND $3 ORDER BY time'
-  const res = await poolQuery(sql, [id, from, to])
+const batchDiskInfobyID = async (id, from, to, bucket) => {
+  const sql = 'SELECT time_bucket($1, time) as bucket_time, floor(avg(read_req)) as read_req, floor(avg(write_req)) as write_req, floor(avg(read_rate)) as read_rate, floor(avg(write_rate)) as write_rate FROM diskinfos WHERE agent_id = $2 AND time BETWEEN $3 AND $4 GROUP BY bucket_time ORDER BY bucket_time'
+  const res = await poolQuery(sql, [bucket, id, from, to])
   if (res.rowCount === 0) {
     return null
   }
