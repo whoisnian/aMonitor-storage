@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS agents (
   cpu_model     VARCHAR(255)    NOT NULL DEFAULT 'unknown',
   cpu_cores     SMALLINT        NOT NULL DEFAULT 0,
   ip            VARCHAR(255)    NOT NULL DEFAULT 'unknown',
+  status        VARCHAR(64)     NOT NULL DEFAULT 'off',
   deleted       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -155,6 +156,7 @@ CREATE TABLE IF NOT EXISTS rules (
   event         VARCHAR(255)    NOT NULL,
   threshold     INTEGER         NOT NULL,
   interval      INTEGER         NOT NULL,
+  silent        INTEGER         NOT NULL,
   level         VARCHAR(64)     NOT NULL,
   group_id      INTEGER         REFERENCES rulegroups(id),
   deleted       BOOLEAN         NOT NULL DEFAULT false,

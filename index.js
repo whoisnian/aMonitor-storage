@@ -9,7 +9,7 @@ import { registerRouter } from './router/register'
 import { statusRouter, updateStatus } from './router/status'
 import { signInRouter, signUpRouter, logoutRouter } from './router/auth'
 import { selfRouter } from './router/user'
-import { allAgentsRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
+import { allAgentsRouter, agentStatusRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
 import { dataRouter } from './router/data'
 
 const app = express()
@@ -59,6 +59,7 @@ const runServer = async () => {
   app.get('/api/agents', loginRequired, asyncRouter(allAgentsRouter))
   app.delete('/api/agent/:agentID', loginRequired, asyncRouter(deleteAgentRouter))
   app.put('/api/agent/:agentID', loginRequired, asyncRouter(recoverAgentRouter))
+  app.post('/api/agent/:agentID', loginRequired, asyncRouter(agentStatusRouter))
   app.get('/api/agent/:agentID', loginRequired, asyncRouter(agentInfoRouter))
 
   app.get('/api/data/:agentID/:category', loginRequired, asyncRouter(dataRouter))

@@ -27,7 +27,7 @@ const updateBasicInfo = async (packet, agentID) => {
   const sql =
   'UPDATE ' +
   'agents ' +
-  'SET (distro, kernel, hostname, cpu_model, cpu_cores, updated_at) = ($1, $2, $3, $4, $5, $6) ' +
+  'SET (distro, kernel, hostname, cpu_model, cpu_cores, status, updated_at) = ($1, $2, $3, $4, $5, $6, $7) ' +
   'WHERE id = $7'
   await poolQuery(sql, [
     packet.MetaData.Distro,
@@ -35,8 +35,21 @@ const updateBasicInfo = async (packet, agentID) => {
     packet.MetaData.Hostname,
     packet.MetaData.CPUModel,
     packet.MetaData.CPUCores,
+    'ok',
     new Date(packet.Timestamp * 1000),
     agentID])
+}
+
+const updateAgentStatusbyID = async (status, id) => {
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET (status, updated_at) = ($1, $2) ' +
+  'WHERE id = $3'
+  await poolQuery(sql, [
+    status,
+    new Date(),
+    id])
 }
 
 const updateIPAddress = async (ip, agentID) => {
@@ -417,17 +430,18 @@ const batchFileMDInfobyID = async (id, from, to) => {
   return res.rows
 }
 
-const insertRule = async (name, target, event, threshold, interval, level, groupID) => {
+const insertRule = async (name, target, event, threshold, interval, silent, level, groupID) => {
   const sql =
   'INSERT ' +
-  'INTO rules(name, target, event, threshold, interval, level, group_id) ' +
-  'VALUES ($1, $2, $3, $4, $5, $6, $7)'
+  'INTO rules(name, target, event, threshold, interval, silent, level, group_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
   await poolQuery(sql, [
     name,
     target,
     event,
     threshold,
     interval,
+    silent,
     level,
     groupID])
 }
@@ -465,7 +479,7 @@ const getAllRuleGroups = async (deleted) => {
 const getRulesbyGroupID = async (groupID) => {
   const sql =
   'SELECT ' +
-  'id, name, target, event, threshold, interval, level, group_id ' +
+  'id, name, target, event, threshold, interval, silent, level, group_id ' +
   'FROM rules ' +
   'WHERE deleted = false AND group_id = $1 ' +
   'ORDER BY id'
@@ -479,11 +493,11 @@ const getRulesbyGroupID = async (groupID) => {
 const getRulesbyAgentID = async (AgentID) => {
   const sql =
   'SELECT ' +
-  'agentrules.rule_id, rules.name, rules.target, rules.event, rules.threshold, rules.interval, rules.level, rules.group_id ' +
+  'agentrules.rule_id as id, rules.name, rules.target, rules.event, rules.threshold, rules.interval, rules.silent, rules.level, rules.group_id ' +
   'FROM agentrules ' +
+  'INNER JOIN rules ON rules.id = agentrules.rule_id AND rules.deleted = false ' +
   'WHERE agent_id = $1 ' +
-  'INNER JOIN rules ON rules.id = rule_id' +
-  'ORDER BY rule_id'
+  'ORDER BY id'
   const res = await poolQuery(sql, [AgentID])
   if (res.rowCount === 0) {
     return null
@@ -491,10 +505,44 @@ const getRulesbyAgentID = async (AgentID) => {
   return res.rows
 }
 
+const deleteRuleGroupbyID = async (groupID) => {
+  const sql1 =
+  'UPDATE ' +
+  'rulegroups ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
+  await poolQuery(sql1, [true, groupID])
+
+  const sql2 =
+  'UPDATE ' +
+  'rules ' +
+  'SET deleted = $1 ' +
+  'WHERE group_id = $2'
+  await poolQuery(sql2, [true, groupID])
+}
+
+const deleteRulebyID = async (ruleID) => {
+  const sql =
+  'UPDATE ' +
+  'rules ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
+  await poolQuery(sql, [true, ruleID])
+}
+
+const deleteAgentRulebyIDs = async (agentID, ruleID) => {
+  const sql =
+  'DELETE ' +
+  'FROM rules ' +
+  'WHERE agent_id = $1 AND rule_id = $2'
+  await poolQuery(sql, [agentID, ruleID])
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
   updateBasicInfo,
+  updateAgentStatusbyID,
   updateIPAddress,
   insertCpuInfo,
   insertMemInfo,
@@ -525,5 +573,8 @@ export {
   insertAgentrule,
   getAllRuleGroups,
   getRulesbyGroupID,
-  getRulesbyAgentID
+  getRulesbyAgentID,
+  deleteRuleGroupbyID,
+  deleteRulebyID,
+  deleteAgentRulebyIDs
 }

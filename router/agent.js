@@ -2,8 +2,10 @@ import {
   getAllAgents,
   getAgentInfobyID,
   deleteAgentbyID,
-  recoverAgentbyID
+  recoverAgentbyID,
+  updateAgentStatusbyID
 } from '../module/storage'
+import { isString } from '../module/util'
 
 const allAgentsRouter = async (req, res) => {
   const deleted = (req.query.deleted === 'true')
@@ -25,6 +27,19 @@ const allAgentsRouter = async (req, res) => {
   })
 
   res.status(200).send(agentList)
+}
+
+const agentStatusRouter = async (req, res) => {
+  const agentID = parseInt(req.params.agentID)
+  const status = req.body.status
+  if (isNaN(agentID) || !isString(status)) {
+    res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  await updateAgentStatusbyID(status, agentID)
+
+  res.status(200).send({ result: 'success' })
 }
 
 const deleteAgentRouter = async (req, res) => {
@@ -78,6 +93,7 @@ const agentInfoRouter = async (req, res) => {
 
 export {
   allAgentsRouter,
+  agentStatusRouter,
   deleteAgentRouter,
   recoverAgentRouter,
   agentInfoRouter
