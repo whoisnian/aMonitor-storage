@@ -17,6 +17,7 @@ import {
   getRulesbyAgentID
 } from '../module/storage'
 import { analyzer } from '../module/analyzer'
+import { sendMessage } from '../module/sender'
 import { getClientIP } from '../module/util'
 
 // 报警规则存储器
@@ -43,10 +44,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].cpu) {
           rules[req.from].cpu.forEach(async (cpurule, index) => {
             if (Date.now() > cpurule.trigger_time + cpurule.silent) { // 非静默区间
-              const checked = await analyzer.cpu[cpurule.event](req.from, cpurule)
+              const { checked, content } = await analyzer.cpu[cpurule.event](req.from, cpurule)
               if (checked) { // 满足报警条件
                 rules[req.from].cpu[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(cpurule))
+                sendMessage(content, req.from, cpurule)
               }
             }
           })
@@ -57,10 +58,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].mem) {
           rules[req.from].mem.forEach(async (memrule, index) => {
             if (Date.now() > memrule.trigger_time + memrule.silent) { // 非静默区间
-              const checked = await analyzer.mem[memrule.event](req.from, memrule)
+              const { checked, content } = await analyzer.mem[memrule.event](req.from, memrule)
               if (checked) { // 满足报警条件
                 rules[req.from].mem[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(memrule))
+                sendMessage(content, req.from, memrule)
               }
             }
           })
@@ -71,10 +72,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].load) {
           rules[req.from].load.forEach(async (loadrule, index) => {
             if (Date.now() > loadrule.trigger_time + loadrule.silent) { // 非静默区间
-              const checked = await analyzer.load[loadrule.event](req.from, loadrule)
+              const { checked, content } = await analyzer.load[loadrule.event](req.from, loadrule, packet)
               if (checked) { // 满足报警条件
                 rules[req.from].load[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(loadrule))
+                sendMessage(content, req.from, loadrule)
               }
             }
           })
@@ -85,10 +86,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].net) {
           rules[req.from].net.forEach(async (netrule, index) => {
             if (Date.now() > netrule.trigger_time + netrule.silent) { // 非静默区间
-              const checked = await analyzer.net[netrule.event](req.from, netrule)
+              const { checked, content } = await analyzer.net[netrule.event](req.from, netrule)
               if (checked) { // 满足报警条件
                 rules[req.from].net[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(netrule))
+                sendMessage(content, req.from, netrule)
               }
             }
           })
@@ -99,10 +100,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].disk) {
           rules[req.from].disk.forEach(async (diskrule, index) => {
             if (Date.now() > diskrule.trigger_time + diskrule.silent) { // 非静默区间
-              const checked = await analyzer.disk[diskrule.event](req.from, diskrule)
+              const { checked, content } = await analyzer.disk[diskrule.event](req.from, diskrule)
               if (checked) { // 满足报警条件
                 rules[req.from].disk[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(diskrule))
+                sendMessage(content, req.from, diskrule)
               }
             }
           })
@@ -113,10 +114,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].mount) {
           rules[req.from].mount.forEach(async (mountrule, index) => {
             if (Date.now() > mountrule.trigger_time + mountrule.silent) { // 非静默区间
-              const checked = await analyzer.mount[mountrule.event](req.from, mountrule)
+              const { checked, content } = await analyzer.mount[mountrule.event](req.from, mountrule, packet)
               if (checked) { // 满足报警条件
                 rules[req.from].mount[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(mountrule))
+                sendMessage(content, req.from, mountrule)
               }
             }
           })
@@ -127,10 +128,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].sshd) {
           rules[req.from].sshd.forEach(async (sshdrule, index) => {
             if (Date.now() > sshdrule.trigger_time + sshdrule.silent) { // 非静默区间
-              const checked = await analyzer.sshd[sshdrule.event](req.from, sshdrule, packet)
+              const { checked, content } = await analyzer.sshd[sshdrule.event](req.from, sshdrule, packet)
               if (checked) { // 满足报警条件
                 rules[req.from].sshd[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(sshdrule))
+                sendMessage(content, req.from, sshdrule)
               }
             }
           })
@@ -141,10 +142,10 @@ wsServer.on('connection', (ws, req) => {
         if (rules[req.from].filemd) {
           rules[req.from].filemd.forEach(async (filemdrule, index) => {
             if (Date.now() > filemdrule.trigger_time + filemdrule.silent) { // 非静默区间
-              const checked = await analyzer.filemd[filemdrule.event](req.from, filemdrule, packet)
+              const { checked, content } = await analyzer.filemd[filemdrule.event](req.from, filemdrule, packet)
               if (checked) { // 满足报警条件
                 rules[req.from].filemd[index].trigger_time = Date.now()
-                logger.warn(JSON.stringify(filemdrule))
+                sendMessage(content, req.from, filemdrule)
               }
             }
           })
