@@ -182,3 +182,36 @@ CREATE TABLE IF NOT EXISTS agentrules (
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- receivers 接收者
+CREATE TABLE IF NOT EXISTS receivers (
+  id            SERIAL          PRIMARY KEY,
+  name          VARCHAR(255)    NOT NULL,
+  type          VARCHAR(64)     NOT NULL,
+  addr          VARCHAR(4096)   NOT NULL,
+  token         VARCHAR(255)    NOT NULL,
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- receivergroups 接收者所属规则组
+CREATE TABLE IF NOT EXISTS receivergroups (
+  id            SERIAL          PRIMARY KEY,
+  receiver_id   INTEGER         REFERENCES receivers(id),
+  group_id      INTEGER         REFERENCES rulegroups(id),
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- messages 报警信息
+CREATE TABLE IF NOT EXISTS messages (
+  id            SERIAL          PRIMARY KEY,
+  content       TEXT            NOT NULL,
+  agent_id      INTEGER         REFERENCES agents(id),
+  rule_id       INTEGER         REFERENCES rules(id),
+  group_id      INTEGER         REFERENCES rulegroups(id),
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
