@@ -92,6 +92,7 @@ const groupRulesRouter = async (req, res) => {
       name: rule.name,
       target: rule.target,
       event: rule.event,
+      addition: rule.addition,
       threshold: rule.threshold,
       interval: rule.interval,
       silent: rule.silent,

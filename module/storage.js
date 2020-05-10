@@ -479,7 +479,7 @@ const getAllRuleGroups = async (deleted) => {
 const getRulesbyGroupID = async (groupID) => {
   const sql =
   'SELECT ' +
-  'id, name, target, event, threshold, interval, silent, level, group_id ' +
+  'id, name, target, event, addition, threshold, interval, silent, level, group_id ' +
   'FROM rules ' +
   'WHERE deleted = false AND group_id = $1 ' +
   'ORDER BY id'
