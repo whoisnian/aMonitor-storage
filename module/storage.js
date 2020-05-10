@@ -602,7 +602,7 @@ const getAllMessages = async (deleted) => {
   'id, content, agent_id, rule_id, group_id, created_at ' +
   'FROM messages ' +
   'WHERE deleted = $1 ' +
-  'ORDER BY id'
+  'ORDER BY id DESC'
   const res = await poolQuery(sql, [deleted])
   if (res.rowCount === 0) {
     return null
@@ -631,7 +631,7 @@ const getMessagesbyAgentID = async (agentID) => {
   'id, content, rule_id, group_id, created_at ' +
   'FROM messages ' +
   'WHERE agent_id = $1 AND deleted = false ' +
-  'ORDER BY id'
+  'ORDER BY id DESC'
   const res = await poolQuery(sql, [agentID])
   if (res.rowCount === 0) {
     return null
