@@ -22,6 +22,19 @@ import {
   deleteRuleRouter,
   deleteAgentRuleRouter
 } from './router/rule'
+import {
+  createReceiverRouter,
+  allReceiversRouter,
+  receiversRouter,
+  deleteReceiverRouter,
+  createReceiverGroupRouter,
+  deleteReceiverGroupRouter
+} from './router/receiver'
+import {
+  allMessagesRouter,
+  agentMessagesRouter,
+  deleteMessageRouter
+} from './router/message'
 
 const app = express()
 
@@ -84,6 +97,17 @@ const runServer = async () => {
   app.delete('/api/rulegroup/:groupID', loginRequired, asyncRouter(deleteRuleGroupRouter))
   app.delete('/api/rule/:ruleID', loginRequired, asyncRouter(deleteRuleRouter))
   app.delete('/api/agentrule/:agentID/:ruleID', loginRequired, asyncRouter(deleteAgentRuleRouter))
+
+  app.put('/api/receiver', loginRequired, asyncRouter(createReceiverRouter))
+  app.get('/api/receivers', loginRequired, asyncRouter(allReceiversRouter))
+  app.get('/api/receivers/:groupID', loginRequired, asyncRouter(receiversRouter))
+  app.delete('/api/receiver/:receiverID', loginRequired, asyncRouter(deleteReceiverRouter))
+  app.put('/api/receivergroup', loginRequired, asyncRouter(createReceiverGroupRouter))
+  app.delete('/api/receivergroup/:receiverID/:groupID', loginRequired, asyncRouter(deleteReceiverGroupRouter))
+
+  app.get('/api/messages', loginRequired, asyncRouter(allMessagesRouter))
+  app.get('/api/agentmessages/:agentID', loginRequired, asyncRouter(agentMessagesRouter))
+  app.delete('/api/message/:messageID', loginRequired, asyncRouter(deleteMessageRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {
