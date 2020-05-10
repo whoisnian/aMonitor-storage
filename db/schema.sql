@@ -153,6 +153,7 @@ CREATE TABLE IF NOT EXISTS rules (
   id            SERIAL          PRIMARY KEY,
   name          VARCHAR(255)    NOT NULL,
   target        VARCHAR(255)    NOT NULL,
+  addition      VARCHAR(4096),
   event         VARCHAR(255)    NOT NULL,
   threshold     INTEGER         NOT NULL,
   interval      INTEGER         NOT NULL,

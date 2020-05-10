@@ -11,6 +11,17 @@ import { signInRouter, signUpRouter, logoutRouter } from './router/auth'
 import { selfRouter } from './router/user'
 import { allAgentsRouter, agentStatusRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
 import { dataRouter } from './router/data'
+import {
+  createRuleGroupRouter,
+  createRuleRouter,
+  createAgentRuleRouter,
+  allRuleGroupsRouter,
+  groupRulesRouter,
+  agentRulesRouter,
+  deleteRuleGroupRouter,
+  deleteRuleRouter,
+  deleteAgentRuleRouter
+} from './router/rule'
 
 const app = express()
 
@@ -63,6 +74,16 @@ const runServer = async () => {
   app.get('/api/agent/:agentID', loginRequired, asyncRouter(agentInfoRouter))
 
   app.get('/api/data/:agentID/:category', loginRequired, asyncRouter(dataRouter))
+
+  app.put('/api/rulegroup', loginRequired, asyncRouter(createRuleGroupRouter))
+  app.put('/api/rule', loginRequired, asyncRouter(createRuleRouter))
+  app.put('/api/agentrule', loginRequired, asyncRouter(createAgentRuleRouter))
+  app.get('/api/rulegroups', loginRequired, asyncRouter(allRuleGroupsRouter))
+  app.get('/api/grouprules/:groupID', loginRequired, asyncRouter(groupRulesRouter))
+  app.get('/api/agentrules/:agentID', loginRequired, asyncRouter(agentRulesRouter))
+  app.delete('/api/rulegroup/:groupID', loginRequired, asyncRouter(deleteRuleGroupRouter))
+  app.delete('/api/rule/:ruleID', loginRequired, asyncRouter(deleteRuleRouter))
+  app.delete('/api/agentrule/:agentID/:ruleID', loginRequired, asyncRouter(deleteAgentRuleRouter))
 
   // 中间件：记录路由处理中预期之外的异常
   app.use((err, req, res, next) => {
