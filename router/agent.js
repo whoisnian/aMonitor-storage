@@ -22,6 +22,7 @@ const allAgentsRouter = async (req, res) => {
       distro: agent.distro,
       hostname: agent.hostname,
       ip: agent.ip,
+      status: agent.status,
       deleted: agent.deleted
     }
   })
@@ -87,6 +88,7 @@ const agentInfoRouter = async (req, res) => {
     ip: agent.ip,
     cpu_model: agent.cpu_model,
     cpu_cores: agent.cpu_cores,
+    status: agent.status,
     deleted: agent.deleted
   })
 }

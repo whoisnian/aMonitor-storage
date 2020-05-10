@@ -28,7 +28,7 @@ const updateBasicInfo = async (packet, agentID) => {
   'UPDATE ' +
   'agents ' +
   'SET (distro, kernel, hostname, cpu_model, cpu_cores, status, updated_at) = ($1, $2, $3, $4, $5, $6, $7) ' +
-  'WHERE id = $7'
+  'WHERE id = $8'
   await poolQuery(sql, [
     packet.MetaData.Distro,
     packet.MetaData.Kernel,
@@ -247,7 +247,7 @@ const getUserInfobyID = async (id) => {
 const getAllAgents = async (deleted = false) => {
   const sql =
   'SELECT ' +
-  'id, distro, hostname, ip, deleted ' +
+  'id, distro, hostname, ip, status, deleted ' +
   'FROM agents ' +
   'WHERE deleted = $1 ' +
   'ORDER BY id'
@@ -261,7 +261,7 @@ const getAllAgents = async (deleted = false) => {
 const getAgentInfobyID = async (id) => {
   const sql =
   'SELECT ' +
-  'id, distro, kernel, hostname, ip, cpu_model, cpu_cores, deleted ' +
+  'id, distro, kernel, hostname, ip, cpu_model, cpu_cores, status, deleted ' +
   'FROM agents ' +
   'WHERE id = $1 ' +
   'ORDER BY id'

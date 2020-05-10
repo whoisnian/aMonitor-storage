@@ -40,99 +40,115 @@ wsServer.on('connection', (ws, req) => {
         break
       case 'cpuInfo':
         insertCpuInfo(packet, req.from)
-        rules[req.from].cpu.forEach(async (cpurule, index) => {
-          if (Date.now() > cpurule.trigger_time + cpurule.silent) { // 非静默区间
-            const checked = await analyzer.cpu[cpurule.event](req.from, cpurule)
-            if (checked) { // 满足报警条件
-              rules[req.from].cpu[index].trigger_time = Date.now()
-              logger.warn(cpurule)
+        if (rules[req.from].cpu) {
+          rules[req.from].cpu.forEach(async (cpurule, index) => {
+            if (Date.now() > cpurule.trigger_time + cpurule.silent) { // 非静默区间
+              const checked = await analyzer.cpu[cpurule.event](req.from, cpurule)
+              if (checked) { // 满足报警条件
+                rules[req.from].cpu[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(cpurule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'memInfo':
         insertMemInfo(packet, req.from)
-        rules[req.from].mem.forEach(async (memrule, index) => {
-          if (Date.now() > memrule.trigger_time + memrule.silent) { // 非静默区间
-            const checked = await analyzer.mem[memrule.event](req.from, memrule)
-            if (checked) { // 满足报警条件
-              rules[req.from].mem[index].trigger_time = Date.now()
-              logger.warn(memrule)
+        if (rules[req.from].mem) {
+          rules[req.from].mem.forEach(async (memrule, index) => {
+            if (Date.now() > memrule.trigger_time + memrule.silent) { // 非静默区间
+              const checked = await analyzer.mem[memrule.event](req.from, memrule)
+              if (checked) { // 满足报警条件
+                rules[req.from].mem[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(memrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'loadInfo':
         insertLoadInfo(packet, req.from)
-        rules[req.from].load.forEach(async (loadrule, index) => {
-          if (Date.now() > loadrule.trigger_time + loadrule.silent) { // 非静默区间
-            const checked = await analyzer.load[loadrule.event](req.from, loadrule)
-            if (checked) { // 满足报警条件
-              rules[req.from].load[index].trigger_time = Date.now()
-              logger.warn(loadrule)
+        if (rules[req.from].load) {
+          rules[req.from].load.forEach(async (loadrule, index) => {
+            if (Date.now() > loadrule.trigger_time + loadrule.silent) { // 非静默区间
+              const checked = await analyzer.load[loadrule.event](req.from, loadrule)
+              if (checked) { // 满足报警条件
+                rules[req.from].load[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(loadrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'netInfo':
         insertNetInfo(packet, req.from)
-        rules[req.from].net.forEach(async (netrule, index) => {
-          if (Date.now() > netrule.trigger_time + netrule.silent) { // 非静默区间
-            const checked = await analyzer.net[netrule.event](req.from, netrule)
-            if (checked) { // 满足报警条件
-              rules[req.from].net[index].trigger_time = Date.now()
-              logger.warn(netrule)
+        if (rules[req.from].net) {
+          rules[req.from].net.forEach(async (netrule, index) => {
+            if (Date.now() > netrule.trigger_time + netrule.silent) { // 非静默区间
+              const checked = await analyzer.net[netrule.event](req.from, netrule)
+              if (checked) { // 满足报警条件
+                rules[req.from].net[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(netrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'diskInfo':
         insertDiskInfo(packet, req.from)
-        rules[req.from].disk.forEach(async (diskrule, index) => {
-          if (Date.now() > diskrule.trigger_time + diskrule.silent) { // 非静默区间
-            const checked = await analyzer.disk[diskrule.event](req.from, diskrule)
-            if (checked) { // 满足报警条件
-              rules[req.from].disk[index].trigger_time = Date.now()
-              logger.warn(diskrule)
+        if (rules[req.from].disk) {
+          rules[req.from].disk.forEach(async (diskrule, index) => {
+            if (Date.now() > diskrule.trigger_time + diskrule.silent) { // 非静默区间
+              const checked = await analyzer.disk[diskrule.event](req.from, diskrule)
+              if (checked) { // 满足报警条件
+                rules[req.from].disk[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(diskrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'mountsInfo':
         insertMountsInfo(packet, req.from)
-        rules[req.from].mount.forEach(async (mountrule, index) => {
-          if (Date.now() > mountrule.trigger_time + mountrule.silent) { // 非静默区间
-            const checked = await analyzer.mount[mountrule.event](req.from, mountrule)
-            if (checked) { // 满足报警条件
-              rules[req.from].mount[index].trigger_time = Date.now()
-              logger.warn(mountrule)
+        if (rules[req.from].mount) {
+          rules[req.from].mount.forEach(async (mountrule, index) => {
+            if (Date.now() > mountrule.trigger_time + mountrule.silent) { // 非静默区间
+              const checked = await analyzer.mount[mountrule.event](req.from, mountrule)
+              if (checked) { // 满足报警条件
+                rules[req.from].mount[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(mountrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'sshdInfo':
         insertSshdInfo(packet, req.from)
-        rules[req.from].sshd.forEach(async (sshdrule, index) => {
-          if (Date.now() > sshdrule.trigger_time + sshdrule.silent) { // 非静默区间
-            const checked = await analyzer.sshd[sshdrule.event](req.from, sshdrule, packet)
-            if (checked) { // 满足报警条件
-              rules[req.from].sshd[index].trigger_time = Date.now()
-              logger.warn(sshdrule)
+        if (rules[req.from].sshd) {
+          rules[req.from].sshd.forEach(async (sshdrule, index) => {
+            if (Date.now() > sshdrule.trigger_time + sshdrule.silent) { // 非静默区间
+              const checked = await analyzer.sshd[sshdrule.event](req.from, sshdrule, packet)
+              if (checked) { // 满足报警条件
+                rules[req.from].sshd[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(sshdrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
       case 'fileMDInfo':
         insertFileMDInfo(packet, req.from)
-        rules[req.from].filemd.forEach(async (filemdrule, index) => {
-          if (Date.now() > filemdrule.trigger_time + filemdrule.silent) { // 非静默区间
-            const checked = await analyzer.filemd[filemdrule.event](req.from, filemdrule, packet)
-            if (checked) { // 满足报警条件
-              rules[req.from].filemd[index].trigger_time = Date.now()
-              logger.warn(filemdrule)
+        if (rules[req.from].filemd) {
+          rules[req.from].filemd.forEach(async (filemdrule, index) => {
+            if (Date.now() > filemdrule.trigger_time + filemdrule.silent) { // 非静默区间
+              const checked = await analyzer.filemd[filemdrule.event](req.from, filemdrule, packet)
+              if (checked) { // 满足报警条件
+                rules[req.from].filemd[index].trigger_time = Date.now()
+                logger.warn(JSON.stringify(filemdrule))
+              }
             }
-          }
-        })
+          })
+        }
         break
     }
   })
