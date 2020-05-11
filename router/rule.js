@@ -34,7 +34,7 @@ const createRuleRouter = async (req, res) => {
   const silent = req.body.silent
   const level = req.body.level
   const groupID = req.body.groupID
-  if (!isString(name) || !isString(target) || !isString(addition) || !isString(event) || !isNumber(threshold) || !isNumber(interval) || !isNumber(silent) || !isString(level) || !isNumber(groupID)) {
+  if (!isString(name) || !isString(target) || !isString(addition) || !isString(event) || (threshold && !isNumber(threshold)) || (interval && !isNumber(interval)) || (silent && !isNumber(silent)) || !isString(level) || !isNumber(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
@@ -55,7 +55,7 @@ const updateRuleRouter = async (req, res) => {
   const silent = req.body.silent
   const level = req.body.level
   const groupID = req.body.groupID
-  if (isNaN(ruleID) || !isString(name) || !isString(target) || !isString(addition) || !isString(event) || !isNumber(threshold) || !isNumber(interval) || !isNumber(silent) || !isString(level) || !isNumber(groupID)) {
+  if (isNaN(ruleID) || !isString(name) || !isString(target) || !isString(addition) || !isString(event) || (threshold && !isNumber(threshold)) || (interval && !isNumber(interval)) || (silent && !isNumber(silent)) || !isString(level) || !isNumber(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }

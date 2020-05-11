@@ -92,7 +92,7 @@ const runServer = async () => {
 
   app.put('/api/rulegroup', loginRequired, asyncRouter(createRuleGroupRouter))
   app.put('/api/rule', loginRequired, asyncRouter(createRuleRouter))
-  app.put('/api/rule/:ruleID', loginRequired, asyncRouter(updateRuleRouter))
+  app.post('/api/rule/:ruleID', loginRequired, asyncRouter(updateRuleRouter))
   app.put('/api/agentrule', loginRequired, asyncRouter(createAgentRuleRouter))
   app.get('/api/rulegroups', loginRequired, asyncRouter(allRuleGroupsRouter))
   app.get('/api/grouprules/:groupID', loginRequired, asyncRouter(groupRulesRouter))
