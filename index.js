@@ -27,6 +27,7 @@ import {
   allReceiversRouter,
   receiversRouter,
   deleteReceiverRouter,
+  updateReceiverRouter,
   createReceiverGroupRouter,
   deleteReceiverGroupRouter
 } from './router/receiver'
@@ -102,6 +103,7 @@ const runServer = async () => {
   app.get('/api/receivers', loginRequired, asyncRouter(allReceiversRouter))
   app.get('/api/receivers/:groupID', loginRequired, asyncRouter(receiversRouter))
   app.delete('/api/receiver/:receiverID', loginRequired, asyncRouter(deleteReceiverRouter))
+  app.post('/api/receiver/:receiverID', loginRequired, asyncRouter(updateReceiverRouter))
   app.put('/api/receivergroup', loginRequired, asyncRouter(createReceiverGroupRouter))
   app.delete('/api/receivergroup/:receiverID/:groupID', loginRequired, asyncRouter(deleteReceiverGroupRouter))
 

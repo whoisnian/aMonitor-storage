@@ -3,6 +3,7 @@ import {
   getAllReceivers,
   getReceiversbyGroupID,
   deleteReceiverbyID,
+  updateReceiverbyID,
   insertReceiverGroup,
   deleteReceivergroupbyIDs
 } from '../module/storage'
@@ -83,6 +84,22 @@ const deleteReceiverRouter = async (req, res) => {
   res.status(200).send({ result: 'success' })
 }
 
+const updateReceiverRouter = async (req, res) => {
+  const receiverID = parseInt(req.params.receiverID)
+  const name = req.body.name
+  const type = req.body.type
+  const addr = req.body.addr
+  const token = req.body.token
+  if (isNaN(receiverID) || !isString(name) || !isString(type) || !isString(addr) || !isString(token)) {
+    res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  await updateReceiverbyID(receiverID, name, type, addr, token)
+
+  res.status(200).send({ result: 'success' })
+}
+
 const createReceiverGroupRouter = async (req, res) => {
   const receiverID = req.body.receiverID
   const groupID = req.body.groupID
@@ -114,6 +131,7 @@ export {
   allReceiversRouter,
   receiversRouter,
   deleteReceiverRouter,
+  updateReceiverRouter,
   createReceiverGroupRouter,
   deleteReceiverGroupRouter
 }

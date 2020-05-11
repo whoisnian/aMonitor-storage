@@ -649,6 +649,15 @@ const deleteReceiverbyID = async (id) => {
   await poolQuery(sql, [true, id])
 }
 
+const updateReceiverbyID = async (id, name, type, addr, token) => {
+  const sql =
+  'UPDATE ' +
+  'receivers ' +
+  'SET (name, type, addr, token) = ($1, $2, $3, $4) ' +
+  'WHERE id = $5'
+  await poolQuery(sql, [name, type, addr, token, id])
+}
+
 const deleteReceivergroupbyIDs = async (receiverID, groupID) => {
   const sql =
   'DELETE ' +
@@ -713,6 +722,7 @@ export {
   getReceiversbyGroupID,
   getMessagesbyAgentID,
   deleteReceiverbyID,
+  updateReceiverbyID,
   deleteReceivergroupbyIDs,
   deleteMessagebyID
 }
