@@ -430,20 +430,40 @@ const batchFileMDInfobyID = async (id, from, to) => {
   return res.rows
 }
 
-const insertRule = async (name, target, event, threshold, interval, silent, level, groupID) => {
+const insertRule = async (name, target, addition, event, threshold, interval, silent, level, groupID) => {
   const sql =
   'INSERT ' +
-  'INTO rules(name, target, event, threshold, interval, silent, level, group_id) ' +
-  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+  'INTO rules(name, target, addition, event, threshold, interval, silent, level, group_id) ' +
+  'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
   await poolQuery(sql, [
     name,
     target,
+    addition,
     event,
     threshold,
     interval,
     silent,
     level,
     groupID])
+}
+
+const updateRulebyID = async (id, name, target, addition, event, threshold, interval, silent, level, groupID) => {
+  const sql =
+  'UPDATE ' +
+  'rules ' +
+  'SET (name, target, addition, event, threshold, interval, silent, level, group_id) = ($1, $2, $3, $4, $5, $6, $7, $8, $9) ' +
+  'WHERE id = $10'
+  await poolQuery(sql, [
+    name,
+    target,
+    addition,
+    event,
+    threshold,
+    interval,
+    silent,
+    level,
+    groupID,
+    id])
 }
 
 const insertRuleGroup = async (name) => {
@@ -706,6 +726,7 @@ export {
   batchSshdInfobyID,
   batchFileMDInfobyID,
   insertRule,
+  updateRulebyID,
   insertRuleGroup,
   insertAgentrule,
   getAllRuleGroups,

@@ -7,6 +7,7 @@ import {
   getRulesbyAgentID,
   deleteRuleGroupbyID,
   deleteRulebyID,
+  updateRulebyID,
   deleteAgentRulebyIDs
 } from '../module/storage'
 import { isString, isNumber } from '../module/util'
@@ -26,18 +27,40 @@ const createRuleGroupRouter = async (req, res) => {
 const createRuleRouter = async (req, res) => {
   const name = req.body.name
   const target = req.body.target
+  const addition = req.body.addition
   const event = req.body.event
   const threshold = req.body.threshold
   const interval = req.body.interval
   const silent = req.body.silent
   const level = req.body.level
   const groupID = req.body.groupID
-  if (!isString(name) || !isString(target) || !isString(event) || !isNumber(threshold) || !isNumber(interval) || !isNumber(silent) || !isString(level) || !isNumber(groupID)) {
+  if (!isString(name) || !isString(target) || !isString(addition) || !isString(event) || !isNumber(threshold) || !isNumber(interval) || !isNumber(silent) || !isString(level) || !isNumber(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
 
-  await insertRule(name, target, event, threshold, interval, silent, level, groupID)
+  await insertRule(name, target, addition, event, threshold, interval, silent, level, groupID)
+
+  res.status(200).send({ result: 'success' })
+}
+
+const updateRuleRouter = async (req, res) => {
+  const ruleID = parseInt(req.params.ruleID)
+  const name = req.body.name
+  const target = req.body.target
+  const addition = req.body.addition
+  const event = req.body.event
+  const threshold = req.body.threshold
+  const interval = req.body.interval
+  const silent = req.body.silent
+  const level = req.body.level
+  const groupID = req.body.groupID
+  if (isNaN(ruleID) || !isString(name) || !isString(target) || !isString(addition) || !isString(event) || !isNumber(threshold) || !isNumber(interval) || !isNumber(silent) || !isString(level) || !isNumber(groupID)) {
+    res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  await updateRulebyID(ruleID, name, target, addition, event, threshold, interval, silent, level, groupID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -174,6 +197,7 @@ const deleteAgentRuleRouter = async (req, res) => {
 export {
   createRuleGroupRouter,
   createRuleRouter,
+  updateRuleRouter,
   createAgentRuleRouter,
   allRuleGroupsRouter,
   groupRulesRouter,
