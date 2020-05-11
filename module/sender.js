@@ -5,7 +5,7 @@ import {
 } from './storage'
 
 const sendMessage = async (content, agentID, rule) => {
-  await insertMessage(content, agentID, rule.id, rule.group_id)
+  await insertMessage(content, agentID, rule.id, rule.group_id, rule.level)
   await updateAgentStatusbyID('error', agentID)
 
   const receivers = await getReceiversbyGroupID(rule.group_id)

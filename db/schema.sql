@@ -211,6 +211,7 @@ CREATE TABLE IF NOT EXISTS messages (
   agent_id      INTEGER         REFERENCES agents(id),
   rule_id       INTEGER         REFERENCES rules(id),
   group_id      INTEGER         REFERENCES rulegroups(id),
+  level         VARCHAR(64)     NOT NULL,
   deleted       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP

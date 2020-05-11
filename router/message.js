@@ -18,6 +18,7 @@ const allMessagesRouter = async (req, res) => {
       agent_id: message.agent_id,
       rule_id: message.rule_id,
       group_id: message.group_id,
+      level: message.level,
       created_at: message.created_at
     }
   })
@@ -45,6 +46,7 @@ const agentMessagesRouter = async (req, res) => {
       agent_id: message.agent_id,
       rule_id: message.rule_id,
       group_id: message.group_id,
+      level: message.level,
       created_at: message.created_at
     }
   })

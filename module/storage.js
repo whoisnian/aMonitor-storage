@@ -570,16 +570,17 @@ const insertReceiverGroup = async (receiverID, groupID) => {
   await poolQuery(sql, [receiverID, groupID])
 }
 
-const insertMessage = async (content, agentID, ruleID, groupID) => {
+const insertMessage = async (content, agentID, ruleID, groupID, level) => {
   const sql =
   'INSERT ' +
-  'INTO messages(content, agent_id, rule_id, group_id) ' +
+  'INTO messages(content, agent_id, rule_id, group_id, level) ' +
   'VALUES ($1, $2, $3, $4)'
   await poolQuery(sql, [
     content,
     agentID,
     ruleID,
-    groupID])
+    groupID,
+    level])
 }
 
 const getAllReceivers = async (deleted) => {
@@ -599,7 +600,7 @@ const getAllReceivers = async (deleted) => {
 const getAllMessages = async (deleted) => {
   const sql =
   'SELECT ' +
-  'id, content, agent_id, rule_id, group_id, created_at ' +
+  'id, content, agent_id, rule_id, group_id, level, created_at ' +
   'FROM messages ' +
   'WHERE deleted = $1 ' +
   'ORDER BY id DESC'
@@ -628,7 +629,7 @@ const getReceiversbyGroupID = async (groupID) => {
 const getMessagesbyAgentID = async (agentID) => {
   const sql =
   'SELECT ' +
-  'id, content, rule_id, group_id, created_at ' +
+  'id, content, rule_id, group_id, level, created_at ' +
   'FROM messages ' +
   'WHERE agent_id = $1 AND deleted = false ' +
   'ORDER BY id DESC'
