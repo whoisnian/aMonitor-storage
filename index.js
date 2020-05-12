@@ -18,6 +18,7 @@ import {
   createAgentGroupRouter,
   allGroupsRouter,
   groupRulesRouter,
+  groupAgentsRouter,
   agentRulesRouter,
   deleteGroupRouter,
   deleteRuleRouter,
@@ -96,6 +97,7 @@ const runServer = async () => {
   app.post('/api/agentgroup', loginRequired, asyncRouter(createAgentGroupRouter))
   app.get('/api/groups', loginRequired, asyncRouter(allGroupsRouter))
   app.get('/api/grouprules/:groupID', loginRequired, asyncRouter(groupRulesRouter))
+  app.get('/api/groupagents/:groupID', loginRequired, asyncRouter(groupAgentsRouter))
   app.get('/api/agentrules/:agentID', loginRequired, asyncRouter(agentRulesRouter))
   app.delete('/api/group/:groupID', loginRequired, asyncRouter(deleteGroupRouter))
   app.delete('/api/rule/:ruleID', loginRequired, asyncRouter(deleteRuleRouter))

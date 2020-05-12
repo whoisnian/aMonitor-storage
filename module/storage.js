@@ -564,11 +564,28 @@ const getRulesbyAgentID = async (AgentID) => {
   return res.rows
 }
 
+const getAgentsbyGroupID = async (groupID) => {
+  const sql =
+  'SELECT ' +
+  'id, distro, hostname, ip, status, deleted ' +
+  'FROM agents ' +
+  'WHERE deleted = false AND id IN ' +
+  '(SELECT agent_id ' +
+  'FROM agent_group ' +
+  'WHERE group_id = $1) ' +
+  'ORDER BY id'
+  const res = await poolQuery(sql, [groupID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
 const deleteAgentGroupbyIDs = async (agentID, groupID) => {
   const sql =
   'DELETE ' +
   'FROM agent_group ' +
-  'WHERE agent_id = $1 AND rule_id = $2'
+  'WHERE agent_id = $1 AND group_id = $2'
   await poolQuery(sql, [agentID, groupID])
 }
 
@@ -743,6 +760,7 @@ export {
 
   insertAgentGroup,
   getRulesbyAgentID,
+  getAgentsbyGroupID,
   deleteAgentGroupbyIDs,
 
   insertReceiver,

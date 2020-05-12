@@ -4,6 +4,7 @@ import {
   insertAgentGroup,
   getAllGroups,
   getRulesbyGroupID,
+  getAgentsbyGroupID,
   getRulesbyAgentID,
   deleteGroupbyID,
   deleteRulebyID,
@@ -127,6 +128,33 @@ const groupRulesRouter = async (req, res) => {
   res.status(200).send(ruleList)
 }
 
+const groupAgentsRouter = async (req, res) => {
+  const groupID = parseInt(req.params.groupID)
+  if (isNaN(groupID)) {
+    res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  const agents = await getAgentsbyGroupID(groupID)
+  if (!agents) {
+    res.status(200).send([])
+    return
+  }
+
+  const agentList = agents.map((agent) => {
+    return {
+      id: agent.id,
+      distro: agent.distro,
+      hostname: agent.hostname,
+      ip: agent.ip,
+      status: agent.status,
+      deleted: agent.deleted
+    }
+  })
+
+  res.status(200).send(agentList)
+}
+
 const agentRulesRouter = async (req, res) => {
   const agentID = parseInt(req.params.agentID)
   if (isNaN(agentID)) {
@@ -201,6 +229,7 @@ export {
   createAgentGroupRouter,
   allGroupsRouter,
   groupRulesRouter,
+  groupAgentsRouter,
   agentRulesRouter,
   deleteGroupRouter,
   deleteRuleRouter,
