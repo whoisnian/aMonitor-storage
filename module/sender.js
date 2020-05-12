@@ -1,8 +1,14 @@
+import { createTransport } from 'nodemailer'
+import { config } from './config'
+import { logger } from './logger'
+import { postJSON } from './util'
 import {
   updateAgentStatusbyID,
   insertMessage,
   getReceiversbyGroupID
 } from './storage'
+
+const transporter = createTransport(config.smtp)
 
 const sendMessage = async (content, agentID, rule) => {
   await insertMessage(content, agentID, rule.id, rule.group_id, rule.level)
@@ -13,23 +19,50 @@ const sendMessage = async (content, agentID, rule) => {
   receivers.forEach((receiver) => {
     switch (receiver.type) {
       case 'email':
-        console.log(`Send to ${receiver.name} by email`)
-        console.log(content)
+        transporter.sendMail({
+          from: config.smtp.from,
+          to: receiver.addr,
+          subject: 'aMonitor监控报警',
+          html: `<h3>${content}</h3>` +
+          `<p>主机编号： ${agentID}</p>` +
+          `<p>主机状态面板： <a href='${config.prefix}/agent?id=${agentID}'>${config.prefix}/agent?id=${agentID}</a></p>`
+        })
+        logger.info(`Send message to ${receiver.name} by email`)
         break
       case 'wechat':
-        console.log(`Send to ${receiver.name} by wechat`)
-        console.log(content)
+        postJSON(receiver.addr, {
+          msgtype: 'markdown',
+          markdown: {
+            content: `##### ${content}\n` +
+            `主机编号： ${agentID}\n` +
+            `主机状态面板： [${config.prefix}/agent?id=${agentID}](${config.prefix}/agent?id=${agentID})`
+          }
+        })
+        console.log(`Send message to ${receiver.name} by wechat`)
         break
       case 'dingding':
-        console.log(`Send to ${receiver.name} by dingding`)
-        console.log(content)
+        postJSON(receiver.addr, {
+          msgtype: 'markdown',
+          markdown: {
+            title: 'aMonitor监控报警',
+            text: `##### ${content}\n` +
+            `主机编号： ${agentID}\n\n` +
+            `主机状态面板： [${config.prefix}/agent?id=${agentID}](${config.prefix}/agent?id=${agentID})`
+          }
+        })
+        console.log(`Send message to ${receiver.name} by dingding`)
         break
       case 'lark':
-        console.log(`Send to ${receiver.name} by lark`)
-        console.log(content)
+        postJSON(receiver.addr, {
+          title: 'aMonitor监控报警',
+          text: `${content}\n` +
+          `主机编号： ${agentID}\n` +
+          `主机状态面板： ${config.prefix}/agent?id=${agentID}`
+        })
+        console.log(`Send message to ${receiver.name} by lark`)
         break
       case 'sms':
-        console.log(`Send to ${receiver.name} by sms`)
+        console.log(`Send message to ${receiver.name} by sms`)
         console.log(content)
         break
     }

@@ -1,4 +1,6 @@
 import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'crypto'
+import { httpRequest } from 'http'
+import { httpsRequest } from 'https'
 
 const asyncRouter = router => (req, res, next) =>
   Promise.resolve(router(req, res)).catch(next)
@@ -86,6 +88,20 @@ const calcFromBytes = (raw) => {
   }
 }
 
+const postJSON = (url, body) => {
+  const request = url.startsWith('https') ? httpsRequest : httpRequest
+  const bodyData = JSON.stringify(body)
+  const req = request(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': bodyData.length
+    }
+  })
+  req.write(bodyData)
+  req.end()
+}
+
 export {
   asyncRouter,
   loginRequired,
@@ -98,5 +114,6 @@ export {
   tokenEncode,
   tokenDecode,
   passwordHash,
-  calcFromBytes
+  calcFromBytes,
+  postJSON
 }
