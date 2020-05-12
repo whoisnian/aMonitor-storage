@@ -6,3 +6,6 @@ node_modules
 
 # Ignore tmp
 tmp
+
+# Ignore build output
+dist
