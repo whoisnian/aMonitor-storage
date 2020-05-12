@@ -12,16 +12,16 @@ import { selfRouter } from './router/user'
 import { allAgentsRouter, agentStatusRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
 import { dataRouter } from './router/data'
 import {
-  createRuleGroupRouter,
+  createGroupRouter,
   createRuleRouter,
   updateRuleRouter,
-  createAgentRuleRouter,
-  allRuleGroupsRouter,
+  createAgentGroupRouter,
+  allGroupsRouter,
   groupRulesRouter,
   agentRulesRouter,
-  deleteRuleGroupRouter,
+  deleteGroupRouter,
   deleteRuleRouter,
-  deleteAgentRuleRouter
+  deleteAgentGroupRouter
 } from './router/rule'
 import {
   createReceiverRouter,
@@ -90,23 +90,23 @@ const runServer = async () => {
 
   app.get('/api/data/:agentID/:category', loginRequired, asyncRouter(dataRouter))
 
-  app.put('/api/rulegroup', loginRequired, asyncRouter(createRuleGroupRouter))
-  app.put('/api/rule', loginRequired, asyncRouter(createRuleRouter))
-  app.post('/api/rule/:ruleID', loginRequired, asyncRouter(updateRuleRouter))
-  app.put('/api/agentrule', loginRequired, asyncRouter(createAgentRuleRouter))
-  app.get('/api/rulegroups', loginRequired, asyncRouter(allRuleGroupsRouter))
+  app.post('/api/group', loginRequired, asyncRouter(createGroupRouter))
+  app.post('/api/rule', loginRequired, asyncRouter(createRuleRouter))
+  app.put('/api/rule/:ruleID', loginRequired, asyncRouter(updateRuleRouter))
+  app.post('/api/agentgroup', loginRequired, asyncRouter(createAgentGroupRouter))
+  app.get('/api/groups', loginRequired, asyncRouter(allGroupsRouter))
   app.get('/api/grouprules/:groupID', loginRequired, asyncRouter(groupRulesRouter))
   app.get('/api/agentrules/:agentID', loginRequired, asyncRouter(agentRulesRouter))
-  app.delete('/api/rulegroup/:groupID', loginRequired, asyncRouter(deleteRuleGroupRouter))
+  app.delete('/api/group/:groupID', loginRequired, asyncRouter(deleteGroupRouter))
   app.delete('/api/rule/:ruleID', loginRequired, asyncRouter(deleteRuleRouter))
-  app.delete('/api/agentrule/:agentID/:ruleID', loginRequired, asyncRouter(deleteAgentRuleRouter))
+  app.delete('/api/agentgroup/:agentID/:groupID', loginRequired, asyncRouter(deleteAgentGroupRouter))
 
-  app.put('/api/receiver', loginRequired, asyncRouter(createReceiverRouter))
+  app.post('/api/receiver', loginRequired, asyncRouter(createReceiverRouter))
   app.get('/api/receivers', loginRequired, asyncRouter(allReceiversRouter))
   app.get('/api/receivers/:groupID', loginRequired, asyncRouter(receiversRouter))
   app.delete('/api/receiver/:receiverID', loginRequired, asyncRouter(deleteReceiverRouter))
-  app.post('/api/receiver/:receiverID', loginRequired, asyncRouter(updateReceiverRouter))
-  app.put('/api/receivergroup', loginRequired, asyncRouter(createReceiverGroupRouter))
+  app.put('/api/receiver/:receiverID', loginRequired, asyncRouter(updateReceiverRouter))
+  app.post('/api/receivergroup', loginRequired, asyncRouter(createReceiverGroupRouter))
   app.delete('/api/receivergroup/:receiverID/:groupID', loginRequired, asyncRouter(deleteReceiverGroupRouter))
 
   app.get('/api/messages', loginRequired, asyncRouter(allMessagesRouter))

@@ -177,7 +177,7 @@ const wsRouter = async (request, socket, head) => {
   // 加载报警规则
   const rs = await getRulesbyAgentID(request.from)
   rules[request.from] = {}
-  rs.forEach((r) => {
+  rs && rs.forEach((r) => {
     if (!rules[request.from][r.target]) rules[request.from][r.target] = []
     rules[request.from][r.target].push({
       id: r.id,

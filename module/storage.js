@@ -258,7 +258,7 @@ const getAllAgents = async (deleted = false) => {
   return res.rows
 }
 
-const getAgentInfobyID = async (id) => {
+const getAgentbyID = async (id) => {
   const sql =
   'SELECT ' +
   'id, distro, kernel, hostname, ip, cpu_model, cpu_cores, status, deleted ' +
@@ -466,34 +466,13 @@ const updateRulebyID = async (id, name, target, addition, event, threshold, inte
     id])
 }
 
-const insertRuleGroup = async (name) => {
+const deleteRulebyID = async (ruleID) => {
   const sql =
-  'INSERT ' +
-  'INTO rulegroups(name) ' +
-  'VALUES ($1)'
-  await poolQuery(sql, [name])
-}
-
-const insertAgentrule = async (agentID, ruleID) => {
-  const sql =
-  'INSERT ' +
-  'INTO agentrules(agent_id, rule_id) ' +
-  'VALUES ($1, $2)'
-  await poolQuery(sql, [agentID, ruleID])
-}
-
-const getAllRuleGroups = async (deleted) => {
-  const sql =
-  'SELECT ' +
-  'id, name, created_at ' +
-  'FROM rulegroups ' +
-  'WHERE deleted = $1 ' +
-  'ORDER BY id'
-  const res = await poolQuery(sql, [deleted])
-  if (res.rowCount === 0) {
-    return null
-  }
-  return res.rows
+  'UPDATE ' +
+  'rules ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
+  await poolQuery(sql, [true, ruleID])
 }
 
 const getRulesbyGroupID = async (groupID) => {
@@ -510,25 +489,32 @@ const getRulesbyGroupID = async (groupID) => {
   return res.rows
 }
 
-const getRulesbyAgentID = async (AgentID) => {
+const insertGroup = async (name) => {
+  const sql =
+  'INSERT ' +
+  'INTO groups(name) ' +
+  'VALUES ($1)'
+  await poolQuery(sql, [name])
+}
+
+const getAllGroups = async (deleted) => {
   const sql =
   'SELECT ' +
-  'agentrules.rule_id as id, rules.name, rules.target, rules.event, rules.threshold, rules.interval, rules.silent, rules.level, rules.group_id ' +
-  'FROM agentrules ' +
-  'INNER JOIN rules ON rules.id = agentrules.rule_id AND rules.deleted = false ' +
-  'WHERE agent_id = $1 ' +
+  'id, name, created_at ' +
+  'FROM groups ' +
+  'WHERE deleted = $1 ' +
   'ORDER BY id'
-  const res = await poolQuery(sql, [AgentID])
+  const res = await poolQuery(sql, [deleted])
   if (res.rowCount === 0) {
     return null
   }
   return res.rows
 }
 
-const deleteRuleGroupbyID = async (groupID) => {
+const deleteGroupbyID = async (groupID) => {
   const sql1 =
   'UPDATE ' +
-  'rulegroups ' +
+  'groups ' +
   'SET deleted = $1 ' +
   'WHERE id = $2'
   await poolQuery(sql1, [true, groupID])
@@ -542,32 +528,48 @@ const deleteRuleGroupbyID = async (groupID) => {
 
   const sql3 =
   'DELETE ' +
-  'FROM receivergroups ' +
+  'FROM receiver_group ' +
   'WHERE group_id = $1'
   await poolQuery(sql3, [groupID])
-}
 
-const deleteRulebyID = async (ruleID) => {
-  const sql1 =
-  'UPDATE ' +
-  'rules ' +
-  'SET deleted = $1 ' +
-  'WHERE id = $2'
-  await poolQuery(sql1, [true, ruleID])
-
-  const sql2 =
+  const sql4 =
   'DELETE ' +
-  'FROM agentrules ' +
-  'WHERE rule_id = $1'
-  await poolQuery(sql2, [ruleID])
+  'FROM agent_group ' +
+  'WHERE group_id = $1'
+  await poolQuery(sql4, [groupID])
 }
 
-const deleteAgentRulebyIDs = async (agentID, ruleID) => {
+const insertAgentGroup = async (agentID, groupID) => {
+  const sql =
+  'INSERT ' +
+  'INTO agent_group(agent_id, group_id) ' +
+  'VALUES ($1, $2)'
+  await poolQuery(sql, [agentID, groupID])
+}
+
+const getRulesbyAgentID = async (AgentID) => {
+  const sql =
+  'SELECT ' +
+  'id, name, target, event, threshold, interval, silent, level, group_id ' +
+  'FROM rules ' +
+  'WHERE deleted = false AND group_id IN ' +
+  '(SELECT group_id ' +
+  'FROM agent_group ' +
+  'WHERE agent_id = $1) ' +
+  'ORDER BY id'
+  const res = await poolQuery(sql, [AgentID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const deleteAgentGroupbyIDs = async (agentID, groupID) => {
   const sql =
   'DELETE ' +
-  'FROM agentrules ' +
+  'FROM agent_group ' +
   'WHERE agent_id = $1 AND rule_id = $2'
-  await poolQuery(sql, [agentID, ruleID])
+  await poolQuery(sql, [agentID, groupID])
 }
 
 const insertReceiver = async (name, type, addr, token) => {
@@ -582,25 +584,22 @@ const insertReceiver = async (name, type, addr, token) => {
     token])
 }
 
-const insertReceiverGroup = async (receiverID, groupID) => {
+const updateReceiverbyID = async (id, name, type, addr, token) => {
   const sql =
-  'INSERT ' +
-  'INTO receivergroups(receiver_id, group_id) ' +
-  'VALUES ($1, $2)'
-  await poolQuery(sql, [receiverID, groupID])
+  'UPDATE ' +
+  'receivers ' +
+  'SET (name, type, addr, token) = ($1, $2, $3, $4) ' +
+  'WHERE id = $5'
+  await poolQuery(sql, [name, type, addr, token, id])
 }
 
-const insertMessage = async (content, agentID, ruleID, groupID, level) => {
+const deleteReceiverbyID = async (id) => {
   const sql =
-  'INSERT ' +
-  'INTO messages(content, agent_id, rule_id, group_id, level) ' +
-  'VALUES ($1, $2, $3, $4)'
-  await poolQuery(sql, [
-    content,
-    agentID,
-    ruleID,
-    groupID,
-    level])
+  'UPDATE ' +
+  'receivers ' +
+  'SET deleted = $1 ' +
+  'WHERE id = $2'
+  await poolQuery(sql, [true, id])
 }
 
 const getAllReceivers = async (deleted) => {
@@ -617,6 +616,50 @@ const getAllReceivers = async (deleted) => {
   return res.rows
 }
 
+const insertReceiverGroup = async (receiverID, groupID) => {
+  const sql =
+  'INSERT ' +
+  'INTO receiver_group(receiver_id, group_id) ' +
+  'VALUES ($1, $2)'
+  await poolQuery(sql, [receiverID, groupID])
+}
+
+const getReceiversbyGroupID = async (groupID) => {
+  const sql =
+  'SELECT ' +
+  'receiver_group.receiver_id as id, receivers.name, receivers.type, receivers.addr, receivers.token, receivers.created_at ' +
+  'FROM receiver_group ' +
+  'INNER JOIN receivers ON receivers.id = receiver_group.receiver_id AND receivers.deleted = false ' +
+  'WHERE group_id = $1 ' +
+  'ORDER BY id'
+  const res = await poolQuery(sql, [groupID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const deleteReceiverGroupbyIDs = async (receiverID, groupID) => {
+  const sql =
+  'DELETE ' +
+  'FROM receiver_group ' +
+  'WHERE receiver_id = $1 AND group_id = $2'
+  await poolQuery(sql, [receiverID, groupID])
+}
+
+const insertMessage = async (content, agentID, ruleID, groupID, level) => {
+  const sql =
+  'INSERT ' +
+  'INTO messages(content, agent_id, rule_id, group_id, level) ' +
+  'VALUES ($1, $2, $3, $4)'
+  await poolQuery(sql, [
+    content,
+    agentID,
+    ruleID,
+    groupID,
+    level])
+}
+
 const getAllMessages = async (deleted) => {
   const sql =
   'SELECT ' +
@@ -625,21 +668,6 @@ const getAllMessages = async (deleted) => {
   'WHERE deleted = $1 ' +
   'ORDER BY id DESC'
   const res = await poolQuery(sql, [deleted])
-  if (res.rowCount === 0) {
-    return null
-  }
-  return res.rows
-}
-
-const getReceiversbyGroupID = async (groupID) => {
-  const sql =
-  'SELECT ' +
-  'receivergroups.receiver_id as id, receivers.name, receivers.type, receivers.addr, receivers.token, receivers.created_at ' +
-  'FROM receivergroups ' +
-  'INNER JOIN receivers ON receivers.id = receivergroups.receiver_id AND receivers.deleted = false ' +
-  'WHERE group_id = $1 ' +
-  'ORDER BY id'
-  const res = await poolQuery(sql, [groupID])
   if (res.rowCount === 0) {
     return null
   }
@@ -660,32 +688,6 @@ const getMessagesbyAgentID = async (agentID) => {
   return res.rows
 }
 
-const deleteReceiverbyID = async (id) => {
-  const sql =
-  'UPDATE ' +
-  'receivers ' +
-  'SET deleted = $1 ' +
-  'WHERE id = $2'
-  await poolQuery(sql, [true, id])
-}
-
-const updateReceiverbyID = async (id, name, type, addr, token) => {
-  const sql =
-  'UPDATE ' +
-  'receivers ' +
-  'SET (name, type, addr, token) = ($1, $2, $3, $4) ' +
-  'WHERE id = $5'
-  await poolQuery(sql, [name, type, addr, token, id])
-}
-
-const deleteReceivergroupbyIDs = async (receiverID, groupID) => {
-  const sql =
-  'DELETE ' +
-  'FROM receivergroups ' +
-  'WHERE receiver_id = $1 AND group_id = $2'
-  await poolQuery(sql, [receiverID, groupID])
-}
-
 const deleteMessagebyID = async (id) => {
   const sql =
   'UPDATE ' +
@@ -698,6 +700,7 @@ const deleteMessagebyID = async (id) => {
 export {
   registerAgent,
   getAgentIDbyToken,
+
   updateBasicInfo,
   updateAgentStatusbyID,
   updateIPAddress,
@@ -709,14 +712,17 @@ export {
   insertMountsInfo,
   insertSshdInfo,
   insertFileMDInfo,
+
   insertUser,
   authUser,
   getUserIDbyEmail,
   getUserInfobyID,
+
   getAllAgents,
-  getAgentInfobyID,
+  getAgentbyID,
   deleteAgentbyID,
   recoverAgentbyID,
+
   batchCpuInfobyID,
   batchMemInfobyID,
   batchLoadInfobyID,
@@ -725,25 +731,31 @@ export {
   batchMountsInfobyID,
   batchSshdInfobyID,
   batchFileMDInfobyID,
+
   insertRule,
   updateRulebyID,
-  insertRuleGroup,
-  insertAgentrule,
-  getAllRuleGroups,
-  getRulesbyGroupID,
-  getRulesbyAgentID,
-  deleteRuleGroupbyID,
   deleteRulebyID,
-  deleteAgentRulebyIDs,
+  getRulesbyGroupID,
+
+  insertGroup,
+  getAllGroups,
+  deleteGroupbyID,
+
+  insertAgentGroup,
+  getRulesbyAgentID,
+  deleteAgentGroupbyIDs,
+
   insertReceiver,
-  insertReceiverGroup,
-  insertMessage,
-  getAllReceivers,
-  getAllMessages,
-  getReceiversbyGroupID,
-  getMessagesbyAgentID,
-  deleteReceiverbyID,
   updateReceiverbyID,
-  deleteReceivergroupbyIDs,
-  deleteMessagebyID
+  deleteReceiverbyID,
+  getAllReceivers,
+
+  insertReceiverGroup,
+  getReceiversbyGroupID,
+  deleteReceiverGroupbyIDs,
+
+  insertMessage,
+  deleteMessagebyID,
+  getAllMessages,
+  getMessagesbyAgentID
 }

@@ -1,25 +1,25 @@
 import {
   insertRule,
-  insertRuleGroup,
-  insertAgentrule,
-  getAllRuleGroups,
+  insertGroup,
+  insertAgentGroup,
+  getAllGroups,
   getRulesbyGroupID,
   getRulesbyAgentID,
-  deleteRuleGroupbyID,
+  deleteGroupbyID,
   deleteRulebyID,
   updateRulebyID,
-  deleteAgentRulebyIDs
+  deleteAgentGroupbyIDs
 } from '../module/storage'
 import { isString, isNumber } from '../module/util'
 
-const createRuleGroupRouter = async (req, res) => {
+const createGroupRouter = async (req, res) => {
   const name = req.body.name
   if (!isString(name)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
 
-  await insertRuleGroup(name)
+  await insertGroup(name)
 
   res.status(200).send({ result: 'success' })
 }
@@ -65,21 +65,21 @@ const updateRuleRouter = async (req, res) => {
   res.status(200).send({ result: 'success' })
 }
 
-const createAgentRuleRouter = async (req, res) => {
+const createAgentGroupRouter = async (req, res) => {
   const agentID = req.body.agentID
-  const ruleID = req.body.ruleID
-  if (!isNumber(agentID) || !isNumber(ruleID)) {
+  const groupID = req.body.groupID
+  if (!isNumber(agentID) || !isNumber(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
 
-  await insertAgentrule(agentID, ruleID)
+  await insertAgentGroup(agentID, groupID)
 
   res.status(200).send({ result: 'success' })
 }
 
-const allRuleGroupsRouter = async (req, res) => {
-  const groups = await getAllRuleGroups(false)
+const allGroupsRouter = async (req, res) => {
+  const groups = await getAllGroups(false)
   if (!groups) {
     res.status(200).send([])
     return
@@ -157,14 +157,14 @@ const agentRulesRouter = async (req, res) => {
   res.status(200).send(ruleList)
 }
 
-const deleteRuleGroupRouter = async (req, res) => {
+const deleteGroupRouter = async (req, res) => {
   const groupID = parseInt(req.params.groupID)
   if (isNaN(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
 
-  await deleteRuleGroupbyID(groupID)
+  await deleteGroupbyID(groupID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -181,28 +181,28 @@ const deleteRuleRouter = async (req, res) => {
   res.status(200).send({ result: 'success' })
 }
 
-const deleteAgentRuleRouter = async (req, res) => {
+const deleteAgentGroupRouter = async (req, res) => {
   const agentID = parseInt(req.params.agentID)
-  const ruleID = parseInt(req.params.ruleID)
-  if (isNaN(agentID) || isNaN(ruleID)) {
+  const groupID = parseInt(req.params.groupID)
+  if (isNaN(agentID) || isNaN(groupID)) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
     return
   }
 
-  await deleteAgentRulebyIDs(agentID, ruleID)
+  await deleteAgentGroupbyIDs(agentID, groupID)
 
   res.status(200).send({ result: 'success' })
 }
 
 export {
-  createRuleGroupRouter,
+  createGroupRouter,
   createRuleRouter,
   updateRuleRouter,
-  createAgentRuleRouter,
-  allRuleGroupsRouter,
+  createAgentGroupRouter,
+  allGroupsRouter,
   groupRulesRouter,
   agentRulesRouter,
-  deleteRuleGroupRouter,
+  deleteGroupRouter,
   deleteRuleRouter,
-  deleteAgentRuleRouter
+  deleteAgentGroupRouter
 }

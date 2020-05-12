@@ -1,6 +1,6 @@
 import {
   getAllAgents,
-  getAgentInfobyID,
+  getAgentbyID,
   deleteAgentbyID,
   recoverAgentbyID,
   updateAgentStatusbyID
@@ -74,7 +74,7 @@ const agentInfoRouter = async (req, res) => {
     return
   }
 
-  const agent = await getAgentInfobyID(agentID)
+  const agent = await getAgentbyID(agentID)
   if (!agent) {
     res.status(404).send({ error_type: 'AGENT_NOT_FOUND' })
     return

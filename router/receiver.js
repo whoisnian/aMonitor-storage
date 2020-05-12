@@ -5,7 +5,7 @@ import {
   deleteReceiverbyID,
   updateReceiverbyID,
   insertReceiverGroup,
-  deleteReceivergroupbyIDs
+  deleteReceiverGroupbyIDs
 } from '../module/storage'
 import { isString, isNumber } from '../module/util'
 
@@ -121,7 +121,7 @@ const deleteReceiverGroupRouter = async (req, res) => {
     return
   }
 
-  await deleteReceivergroupbyIDs(receiverID, groupID)
+  await deleteReceiverGroupbyIDs(receiverID, groupID)
 
   res.status(200).send({ result: 'success' })
 }

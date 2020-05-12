@@ -148,6 +148,15 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- groups 规则组
+CREATE TABLE IF NOT EXISTS groups (
+  id            SERIAL          PRIMARY KEY,
+  name          VARCHAR(255)    NOT NULL,
+  deleted       BOOLEAN         NOT NULL DEFAULT false,
+  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- rules 监控规则
 CREATE TABLE IF NOT EXISTS rules (
   id            SERIAL          PRIMARY KEY,
@@ -159,26 +168,17 @@ CREATE TABLE IF NOT EXISTS rules (
   interval      INTEGER,
   silent        INTEGER,
   level         VARCHAR(64)     NOT NULL,
-  group_id      INTEGER         REFERENCES rulegroups(id),
+  group_id      INTEGER         REFERENCES groups(id),
   deleted       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- rulegroups 规则组
-CREATE TABLE IF NOT EXISTS rulegroups (
-  id            SERIAL          PRIMARY KEY,
-  name          VARCHAR(255)    NOT NULL,
-  deleted       BOOLEAN         NOT NULL DEFAULT false,
-  created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- agentrules 主机所用规则
-CREATE TABLE IF NOT EXISTS agentrules (
+-- agent_group 主机所属规则组
+CREATE TABLE IF NOT EXISTS agent_group (
   id            SERIAL          PRIMARY KEY,
   agent_id      INTEGER         REFERENCES agents(id),
-  rule_id       INTEGER         REFERENCES rules(id),
+  group_id      INTEGER         REFERENCES groups(id),
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -195,11 +195,11 @@ CREATE TABLE IF NOT EXISTS receivers (
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- receivergroups 接收者所属规则组
-CREATE TABLE IF NOT EXISTS receivergroups (
+-- receiver_group 接收者所属规则组
+CREATE TABLE IF NOT EXISTS receiver_group (
   id            SERIAL          PRIMARY KEY,
   receiver_id   INTEGER         REFERENCES receivers(id),
-  group_id      INTEGER         REFERENCES rulegroups(id),
+  group_id      INTEGER         REFERENCES groups(id),
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS messages (
   content       TEXT            NOT NULL,
   agent_id      INTEGER         REFERENCES agents(id),
   rule_id       INTEGER         REFERENCES rules(id),
-  group_id      INTEGER         REFERENCES rulegroups(id),
+  group_id      INTEGER         REFERENCES groups(id),
   level         VARCHAR(64)     NOT NULL,
   deleted       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
