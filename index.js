@@ -11,6 +11,7 @@ import { signInRouter, signUpRouter, logoutRouter } from './router/auth'
 import { selfRouter } from './router/user'
 import { allAgentsRouter, agentStatusRouter, deleteAgentRouter, recoverAgentRouter, agentInfoRouter } from './router/agent'
 import { dataRouter } from './router/data'
+import { overviewRouter } from './router/overview'
 import {
   createGroupRouter,
   createRuleRouter,
@@ -22,7 +23,8 @@ import {
   agentRulesRouter,
   deleteGroupRouter,
   deleteRuleRouter,
-  deleteAgentGroupRouter
+  deleteAgentGroupRouter,
+  groupRouter
 } from './router/rule'
 import {
   createReceiverRouter,
@@ -82,6 +84,7 @@ const runServer = async () => {
   app.post('/api/logout', asyncRouter(logoutRouter))
 
   app.get('/api/self', loginRequired, asyncRouter(selfRouter))
+  app.get('/api/overview', loginRequired, asyncRouter(overviewRouter))
 
   app.get('/api/agents', loginRequired, asyncRouter(allAgentsRouter))
   app.delete('/api/agent/:agentID', loginRequired, asyncRouter(deleteAgentRouter))
@@ -92,6 +95,7 @@ const runServer = async () => {
   app.get('/api/data/:agentID/:category', loginRequired, asyncRouter(dataRouter))
 
   app.post('/api/group', loginRequired, asyncRouter(createGroupRouter))
+  app.get('/api/group/:groupID', loginRequired, asyncRouter(groupRouter))
   app.post('/api/rule', loginRequired, asyncRouter(createRuleRouter))
   app.put('/api/rule/:ruleID', loginRequired, asyncRouter(updateRuleRouter))
   app.post('/api/agentgroup', loginRequired, asyncRouter(createAgentGroupRouter))

@@ -497,6 +497,19 @@ const insertGroup = async (name) => {
   await poolQuery(sql, [name])
 }
 
+const getGroupbyID = async (id) => {
+  const sql =
+  'SELECT ' +
+  'id, name, created_at ' +
+  'FROM groups ' +
+  'WHERE id = $1'
+  const res = await poolQuery(sql, [id])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows[0]
+}
+
 const getAllGroups = async (deleted) => {
   const sql =
   'SELECT ' +
@@ -714,6 +727,45 @@ const deleteMessagebyID = async (id) => {
   await poolQuery(sql, [true, id])
 }
 
+const recent7daysMessagesCount = async () => {
+  const sql =
+  'SELECT ' +
+  'COUNT(*) ' +
+  'FROM messages ' +
+  'WHERE created_at > $1'
+  const res = await poolQuery(sql, [new Date(Date.now() - 604800000)])
+  if (res.rowCount === 0) {
+    return 0
+  }
+  return res.rows[0].count
+}
+
+const currentErrorAgentsCount = async () => {
+  const sql =
+  'SELECT ' +
+  'COUNT(*) ' +
+  'FROM agents ' +
+  'WHERE deleted = false AND status = $1'
+  const res = await poolQuery(sql, ['error'])
+  if (res.rowCount === 0) {
+    return 0
+  }
+  return res.rows[0].count
+}
+
+const currentOkAgentsCount = async () => {
+  const sql =
+  'SELECT ' +
+  'COUNT(*) ' +
+  'FROM agents ' +
+  'WHERE deleted = false AND status = $1'
+  const res = await poolQuery(sql, ['ok'])
+  if (res.rowCount === 0) {
+    return 0
+  }
+  return res.rows[0].count
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -755,6 +807,7 @@ export {
   getRulesbyGroupID,
 
   insertGroup,
+  getGroupbyID,
   getAllGroups,
   deleteGroupbyID,
 
@@ -775,5 +828,9 @@ export {
   insertMessage,
   deleteMessagebyID,
   getAllMessages,
-  getMessagesbyAgentID
+  getMessagesbyAgentID,
+
+  recent7daysMessagesCount,
+  currentErrorAgentsCount,
+  currentOkAgentsCount
 }

@@ -3,6 +3,7 @@ import {
   insertGroup,
   insertAgentGroup,
   getAllGroups,
+  getGroupbyID,
   getRulesbyGroupID,
   getAgentsbyGroupID,
   getRulesbyAgentID,
@@ -95,6 +96,26 @@ const allGroupsRouter = async (req, res) => {
   })
 
   res.status(200).send(groupList)
+}
+
+const groupRouter = async (req, res) => {
+  const groupID = parseInt(req.params.groupID)
+  if (isNaN(groupID)) {
+    res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  const group = await getGroupbyID(groupID)
+  if (!group) {
+    res.status(404).send({ error_type: 'GROUP_NOT_FOUND' })
+    return
+  }
+
+  res.status(200).send({
+    id: group.id,
+    name: group.name,
+    created_at: group.created_at
+  })
 }
 
 const groupRulesRouter = async (req, res) => {
@@ -228,6 +249,7 @@ export {
   updateRuleRouter,
   createAgentGroupRouter,
   allGroupsRouter,
+  groupRouter,
   groupRulesRouter,
   groupAgentsRouter,
   agentRulesRouter,
