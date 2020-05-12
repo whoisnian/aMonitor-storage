@@ -651,7 +651,7 @@ const insertMessage = async (content, agentID, ruleID, groupID, level) => {
   const sql =
   'INSERT ' +
   'INTO messages(content, agent_id, rule_id, group_id, level) ' +
-  'VALUES ($1, $2, $3, $4)'
+  'VALUES ($1, $2, $3, $4, $5)'
   await poolQuery(sql, [
     content,
     agentID,
