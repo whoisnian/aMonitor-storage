@@ -38,7 +38,7 @@ const sendMessage = async (content, agentID, rule) => {
             `主机状态面板： [${config.prefix}/agent?id=${agentID}](${config.prefix}/agent?id=${agentID})`
           }
         })
-        console.log(`Send message to ${receiver.name} by wechat`)
+        logger.info(`Send message to ${receiver.name} by wechat`)
         break
       case 'dingding':
         postJSON(receiver.addr, {
@@ -50,7 +50,7 @@ const sendMessage = async (content, agentID, rule) => {
             `主机状态面板： [${config.prefix}/agent?id=${agentID}](${config.prefix}/agent?id=${agentID})`
           }
         })
-        console.log(`Send message to ${receiver.name} by dingding`)
+        logger.info(`Send message to ${receiver.name} by dingding`)
         break
       case 'lark':
         postJSON(receiver.addr, {
@@ -59,11 +59,11 @@ const sendMessage = async (content, agentID, rule) => {
           `主机编号： ${agentID}\n` +
           `主机状态面板： ${config.prefix}/agent?id=${agentID}`
         })
-        console.log(`Send message to ${receiver.name} by lark`)
+        logger.info(`Send message to ${receiver.name} by lark`)
         break
       case 'sms':
-        console.log(`Send message to ${receiver.name} by sms`)
-        console.log(content)
+        logger.info(`Send message to ${receiver.name} by sms`)
+        logger.info(content)
         break
     }
   })
