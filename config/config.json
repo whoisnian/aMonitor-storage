@@ -21,7 +21,8 @@
     "auth": {
       "user": "username",
       "pass": "password"
-    }
+    },
+    "from": "no-reply@example.com"
   },
   "prefix": "",
   "secret": "this_is_a_secret_key_of_32_bytes",
