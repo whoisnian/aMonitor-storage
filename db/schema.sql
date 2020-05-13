@@ -216,3 +216,10 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- preferences 系统设置
+CREATE TABLE IF NOT EXISTS preferences (
+  id            SERIAL          PRIMARY KEY,
+  key           VARCHAR(255)    UNIQUE NOT NULL,
+  value         VARCHAR(255)    NOT NULL
+);

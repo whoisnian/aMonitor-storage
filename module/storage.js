@@ -766,6 +766,41 @@ const currentOkAgentsCount = async () => {
   return res.rows[0].count
 }
 
+const setPreference = async (key, value) => {
+  const sql =
+  'INSERT ' +
+  'INTO preferences(key, value) ' +
+  'VALUES ($1, $2) ' +
+  'ON CONFLICT(key) ' +
+  'DO UPDATE SET value = $3 WHERE excluded.key = $4'
+  await poolQuery(sql, [key, value, value, key])
+}
+
+const getAllPreferences = async () => {
+  const sql =
+  'SELECT ' +
+  'key, value ' +
+  'FROM preferences'
+  const res = await poolQuery(sql, [])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows
+}
+
+const getPreference = async (key) => {
+  const sql =
+  'SELECT ' +
+  'value ' +
+  'FROM preferences ' +
+  'WHERE key = $1'
+  const res = await poolQuery(sql, [key])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows[0].value
+}
+
 export {
   registerAgent,
   getAgentIDbyToken,
@@ -832,5 +867,9 @@ export {
 
   recent7daysMessagesCount,
   currentErrorAgentsCount,
-  currentOkAgentsCount
+  currentOkAgentsCount,
+
+  setPreference,
+  getAllPreferences,
+  getPreference
 }

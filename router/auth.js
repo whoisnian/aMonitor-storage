@@ -1,4 +1,4 @@
-import { insertUser, getUserIDbyEmail, authUser } from '../module/storage'
+import { insertUser, getUserIDbyEmail, authUser, getPreference } from '../module/storage'
 import { passwordHash } from '../module/util'
 
 // FIXME: raw password will be recorded by logger
@@ -33,6 +33,12 @@ const signUpRouter = async (req, res) => {
 
   if (!emailRegex.test(email) || password.length < 6 || username.length < 1) {
     res.status(400).send({ error_type: 'INVALID_PARAMS' })
+    return
+  }
+
+  const forbidSignUp = await getPreference('forbidSignUp')
+  if (forbidSignUp === 'true') {
+    res.status(403).send({ error_type: 'FORBIDDEN' })
     return
   }
 

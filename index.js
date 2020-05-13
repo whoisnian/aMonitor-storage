@@ -40,6 +40,11 @@ import {
   agentMessagesRouter,
   deleteMessageRouter
 } from './router/message'
+import {
+  allPreferencesRouter,
+  preferenceRouter,
+  updatePreferenceRouter
+} from './router/preference'
 
 const app = express()
 
@@ -82,6 +87,9 @@ const runServer = async () => {
   app.post('/api/signin', asyncRouter(signInRouter))
   app.post('/api/signup', asyncRouter(signUpRouter))
   app.post('/api/logout', asyncRouter(logoutRouter))
+  app.get('/api/preferences', asyncRouter(allPreferencesRouter))
+  app.get('/api/preference', asyncRouter(preferenceRouter))
+  app.put('/api/preference', loginRequired, asyncRouter(updatePreferenceRouter))
 
   app.get('/api/self', loginRequired, asyncRouter(selfRouter))
   app.get('/api/overview', loginRequired, asyncRouter(overviewRouter))
