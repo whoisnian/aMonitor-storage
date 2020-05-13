@@ -707,7 +707,7 @@ const getAllMessages = async (deleted) => {
 const getMessagesbyAgentID = async (agentID) => {
   const sql =
   'SELECT ' +
-  'id, content, rule_id, group_id, level, created_at ' +
+  'id, content, agent_id, rule_id, group_id, level, created_at ' +
   'FROM messages ' +
   'WHERE agent_id = $1 AND deleted = false ' +
   'ORDER BY id DESC'
