@@ -194,6 +194,7 @@ const agentRulesRouter = async (req, res) => {
       id: rule.id,
       name: rule.name,
       target: rule.target,
+      addition: rule.addition,
       event: rule.event,
       threshold: rule.threshold,
       interval: rule.interval,
