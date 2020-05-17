@@ -21,10 +21,12 @@ const initSession = async () => {
   })
 
   return expressSession({
+    name: 'amonitor_session',
     store: new RedisStore({ client: redisClient }),
     secret: config.secret,
     saveUninitialized: false,
-    resave: false
+    resave: false,
+    cookie: { maxAge: 604800000 } // 过期时间一周
   })
 }
 
