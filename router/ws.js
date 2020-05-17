@@ -152,6 +152,7 @@ wsServer.on('connection', (ws, req) => {
         }
         break
     }
+    ws.pong()
   })
 })
 
