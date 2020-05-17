@@ -23,7 +23,7 @@ import { getClientIP } from '../module/util'
 // 报警规则存储器
 const rules = {}
 
-const wsServer = new WebSocketServer({ noServer: true })
+const wsServer = new WebSocketServer({ noServer: true, clientTracking: true })
 
 wsServer.on('connection', (ws, req) => {
   logger.info('Agent ' + req.from + ' start websocket connection.')
@@ -198,4 +198,8 @@ const wsRouter = async (request, socket, head) => {
   })
 }
 
-export { wsRouter }
+const wsCount = () => {
+  return wsServer.clients.size
+}
+
+export { wsRouter, wsCount }

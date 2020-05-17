@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { config } from '../module/config'
+import { wsCount } from './ws'
 
 const packageJSON = JSON.parse(readFileSync(resolve(__dirname, '../package.json')).toString())
 
@@ -29,6 +30,7 @@ const statusRouter = async (req, res) => {
       }
       return last
     }, 0),
+    wsCount: wsCount(),
     package: {
       name: packageName,
       version: packageVersion,
