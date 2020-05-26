@@ -26,7 +26,7 @@ const sendMessage = async (content, agentID, rule) => {
           html: `<h3>${content}</h3>` +
           `<p>主机编号： ${agentID}</p>` +
           `<p>主机状态面板： <a href='${config.prefix}/agent?id=${agentID}'>${config.prefix}/agent?id=${agentID}</a></p>`
-        })
+        }, (err) => { logger.error(err) })
         logger.info(`Send message to ${receiver.name} by email`)
         break
       case 'wechat':
