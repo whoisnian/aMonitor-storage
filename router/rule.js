@@ -2,11 +2,14 @@ import {
   insertRule,
   insertGroup,
   insertAgentGroup,
+  updateAgentRefreshbygroupID,
+  updateAgentRefreshbyID,
   getAllGroups,
   getGroupbyID,
   getRulesbyGroupID,
   getAgentsbyGroupID,
   getRulesbyAgentID,
+  getGroupIDbyRuleID,
   deleteGroupbyID,
   deleteRulebyID,
   updateRulebyID,
@@ -42,6 +45,7 @@ const createRuleRouter = async (req, res) => {
   }
 
   await insertRule(name, target, addition, event, threshold, interval, silent, level, groupID)
+  await updateAgentRefreshbygroupID(true, groupID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -63,6 +67,7 @@ const updateRuleRouter = async (req, res) => {
   }
 
   await updateRulebyID(ruleID, name, target, addition, event, threshold, interval, silent, level, groupID)
+  await updateAgentRefreshbygroupID(true, groupID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -76,6 +81,7 @@ const createAgentGroupRouter = async (req, res) => {
   }
 
   await insertAgentGroup(agentID, groupID)
+  await updateAgentRefreshbyID(true, agentID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -215,6 +221,7 @@ const deleteGroupRouter = async (req, res) => {
   }
 
   await deleteGroupbyID(groupID)
+  await updateAgentRefreshbygroupID(true, groupID)
 
   res.status(200).send({ result: 'success' })
 }
@@ -228,6 +235,9 @@ const deleteRuleRouter = async (req, res) => {
 
   await deleteRulebyID(ruleID)
 
+  const groupID = await getGroupIDbyRuleID(ruleID)
+  await updateAgentRefreshbygroupID(true, groupID)
+
   res.status(200).send({ result: 'success' })
 }
 
@@ -240,6 +250,7 @@ const deleteAgentGroupRouter = async (req, res) => {
   }
 
   await deleteAgentGroupbyIDs(agentID, groupID)
+  await updateAgentRefreshbyID(true, agentID)
 
   res.status(200).send({ result: 'success' })
 }

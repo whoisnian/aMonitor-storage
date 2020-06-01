@@ -18,6 +18,8 @@ const getSQL = (text, params) => {
   return params.reduce((q, v, i) => {
     if (typeof v === 'number') {
       return q.replace(`$${i + 1}`, v)
+    } else if (typeof v === 'boolean') {
+      return q.replace(`$${i + 1}`, v)
     } else if (v instanceof Date) {
       return q.replace(`$${i + 1}`, 'to_timestamp(' + (v.getTime() / 1000) + ')')
     } else {

@@ -5,6 +5,8 @@ import {
   getAgentIDbyToken,
   updateBasicInfo,
   updateAgentStatusbyID,
+  updateAgentRefreshbyID,
+  getAgentRefreshbyID,
   updateIPAddress,
   insertCpuInfo,
   insertMemInfo,
@@ -25,6 +27,35 @@ const rules = {}
 
 const wsServer = new WebSocketServer({ noServer: true, clientTracking: true })
 
+const checkRefresh = async function (request) {
+  try {
+    const needRefresh = await getAgentRefreshbyID(request.from)
+    if (!needRefresh) return
+    await updateAgentRefreshbyID(false, request.from)
+
+    logger.warn('Refresh rules for agent ' + request.from)
+
+    const rs = await getRulesbyAgentID(request.from)
+    rules[request.from] = {}
+    rs && rs.forEach((r) => {
+      if (!rules[request.from][r.target]) rules[request.from][r.target] = []
+      rules[request.from][r.target].push({
+        id: r.id,
+        name: r.name,
+        event: r.event,
+        threshold: r.threshold,
+        interval: r.interval,
+        silent: r.silent,
+        level: r.level,
+        group_id: r.group_id,
+        trigger_time: 0
+      })
+    })
+  } catch (err) {
+    logger.error(err)
+  }
+}
+
 wsServer.on('connection', (ws, req) => {
   logger.info('Agent ' + req.from + ' start websocket connection.')
   ws.on('close', () => {
@@ -34,6 +65,7 @@ wsServer.on('connection', (ws, req) => {
 
   ws.on('message', (message) => {
     const packet = JSON.parse(message)
+    checkRefresh(req)
     switch (packet.Category) {
       case 'basicInfo':
         updateBasicInfo(packet, req.from)

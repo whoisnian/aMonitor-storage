@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS agents (
   ip            VARCHAR(255)    NOT NULL DEFAULT 'unknown',
   status        VARCHAR(64)     NOT NULL DEFAULT 'off',
   deleted       BOOLEAN         NOT NULL DEFAULT false,
+  refresh       BOOLEAN         NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

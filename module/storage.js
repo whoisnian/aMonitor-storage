@@ -52,6 +52,46 @@ const updateAgentStatusbyID = async (status, id) => {
     id])
 }
 
+const updateAgentRefreshbygroupID = async (refresh, groupID) => {
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET (refresh, updated_at) = ($1, $2) ' +
+  'WHERE id IN ' +
+  '(SELECT agent_id ' +
+  'FROM agent_group ' +
+  'WHERE group_id = $3)'
+  await poolQuery(sql, [
+    refresh,
+    new Date(),
+    groupID])
+}
+
+const updateAgentRefreshbyID = async (refresh, id) => {
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET (refresh, updated_at) = ($1, $2) ' +
+  'WHERE id = $3'
+  await poolQuery(sql, [
+    refresh,
+    new Date(),
+    id])
+}
+
+const getAgentRefreshbyID = async (id) => {
+  const sql =
+  'UPDATE ' +
+  'agents ' +
+  'SET (refresh, updated_at) = (false, $1) ' +
+  'WHERE id = $2 AND refresh = true'
+  const res = await poolQuery(sql, [new Date(), id])
+  if (res.rowCount === 0) {
+    return false
+  }
+  return true
+}
+
 const updateIPAddress = async (ip, agentID) => {
   const sql =
   'UPDATE ' +
@@ -489,6 +529,19 @@ const getRulesbyGroupID = async (groupID) => {
   return res.rows
 }
 
+const getGroupIDbyRuleID = async (ruleID) => {
+  const sql =
+  'SELECT ' +
+  'group_id ' +
+  'FROM rules ' +
+  'WHERE id = $1'
+  const res = await poolQuery(sql, [ruleID])
+  if (res.rowCount === 0) {
+    return null
+  }
+  return res.rows[0].group_id
+}
+
 const insertGroup = async (name) => {
   const sql =
   'INSERT ' +
@@ -807,6 +860,9 @@ export {
 
   updateBasicInfo,
   updateAgentStatusbyID,
+  updateAgentRefreshbygroupID,
+  updateAgentRefreshbyID,
+  getAgentRefreshbyID,
   updateIPAddress,
   insertCpuInfo,
   insertMemInfo,
@@ -840,6 +896,7 @@ export {
   updateRulebyID,
   deleteRulebyID,
   getRulesbyGroupID,
+  getGroupIDbyRuleID,
 
   insertGroup,
   getGroupbyID,
