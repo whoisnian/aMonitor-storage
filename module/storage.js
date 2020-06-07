@@ -419,21 +419,17 @@ const batchDiskInfobyID = async (id, from, to, bucket) => {
   return res.rows
 }
 
-const batchMountsInfobyID = async (id) => {
+const batchMountsInfobyID = async (id, from, to) => {
   const sql =
   'SELECT ' +
-  'dev_name, ' +
-  'last(mount_point, time) as mount_point, ' +
-  'last(fs_type, time) as fs_type, ' +
-  'last(total_size, time) as total_size, ' +
-  'last(avail_size, time) as avail_size, ' +
-  'last(used_size_percent, time) as used_size_percent, ' +
-  'last(used_nodes_percent, time) as used_nodes_percent ' +
+  'dev_name, mount_point, fs_type, total_size, avail_size, used_size_percent, used_nodes_percent ' +
   'FROM mountinfos ' +
-  'WHERE agent_id = $1 ' +
-  'GROUP BY dev_name ' +
+  'WHERE agent_id = $1 AND time = ' +
+  '(SELECT max(time) ' +
+  'FROM mountinfos ' +
+  'WHERE agent_id = $2 AND time BETWEEN $3 AND $4) ' +
   'ORDER BY dev_name'
-  const res = await poolQuery(sql, [id])
+  const res = await poolQuery(sql, [id, id, from, to])
   if (res.rowCount === 0) {
     return null
   }

@@ -112,7 +112,7 @@ const dataRouter = async (req, res) => {
       res.status(200).send(payload)
       break
     case 'mountsinfo':
-      infos = await batchMountsInfobyID(agentID)
+      infos = await batchMountsInfobyID(agentID, from, to)
       if (!infos) {
         res.status(200).send([])
         return
