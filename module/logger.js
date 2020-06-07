@@ -1,3 +1,5 @@
+import { getClientIP } from './util'
+
 const logger = {}
 
 const tag = {
@@ -43,7 +45,7 @@ logger.reqTimeEnd = function (req, msg) {
 logger.reqEnd = (req, status) => {
   console.log(timeStr(req.arrival) + tag.r + '[' +
     status + '] ' +
-    req.ip + ' ' +
+    getClientIP(req) + ' ' +
     req.from + ' ' +
     req.method + ' ' +
     req.originalUrl + ' ' +
